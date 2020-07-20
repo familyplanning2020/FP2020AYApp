@@ -20,7 +20,7 @@ myaydata <- read.csv("Data/MyAYData.csv", stringsAsFactors = FALSE)
 #myaydata$Young_Adolescents = myaydata$Young.Adolescents..10.14..in.2019
 # myaydata$Youth = myaydata$Youth..15.24..in.2019
 # myaydata$Older_Adolescents = myaydata$Older.Adolescents..15.19..in.2019
-# myaydata$Older_Youth = myaydata$Older.Youth..20.24..in.2019
+
 
 myaydata.long <- myaydata %>% gather(Age_Group, Count, Women_ReproductiveAge, Young_Adolescents, Youth, Older_Adolescents, Older_Youth)
 
