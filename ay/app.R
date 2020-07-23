@@ -8,9 +8,9 @@ library(tidyr)
 library(readxl)
 library(formattable)
 library(plotly)
+library(gt)
 
-
-
+#Pulling in data from excevl
 aypopdata <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYPOP")
 aypopdata.long <- aypopdata %>% gather(Age_Group,Count,`Young Adolescents (10-14)`,`Older Adolescents (15-19)`,`Older Youth (20-24)`)
 
@@ -18,6 +18,9 @@ kle_age <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
 
 kle_marriage <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
 
+ayfp <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYFPUse")
+
+ayfp_sex <- ayfp %>% select(2,4,5,6,7)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -35,10 +38,10 @@ ui <- fluidPage(
 
         # Shows the plots created in server function
         mainPanel(
-           plotOutput("graph", width = "75%", height = "200px"),
-           plotOutput("wide", width = "75%", height = "200px"),
+           plotOutput("graph", width = "75%", height = "100px"),
+           plotOutput("wide", width = "75%", height = "100px"),
            plotOutput("linegraph", width = "75%", height = "200px")
-           #plotOutput("marrtable")
+           # plotOutput("marrtable")
         )
     )
 )
@@ -58,17 +61,16 @@ server <- function(input, output) {
     kle_age_res <- reactive({
         res2 <- kle_age %>% filter(kle_age$Country == input$country)
         res2.long <- res2 %>% gather(Event, Age, `First Marriage`,`First Sex`, `First Birth`)
-        status_levels <- c("First Marriage", "First Sex", "First Birth")
-        status_colors <- c("#0070C0", "#00B050", "#FFC000")
-        
-        df$status <- factor(res2.long$Event, levels=status_levels, ordered=TRUE)
-       
+        #status_levels <- c("First Marriage", "First Sex", "First Birth")
+        #status_colors <- c("#0070C0", "#00B050", "#FFC000")
+        #df$status <- factor(res2.long$Event, levels=status_levels, ordered=TRUE)
         res2.long
     })
     
-   kle_mar_res <- reactive({
-       res3 <- kle_marriage %>% filter(kle_marriage$Country == input$country)
-   })
+    kle_mar_res <- reactive({
+        res3 <- kle_marriage %>% filter(kle_marriage$Country == input$country)
+        res3
+    })
     
     #designs the bar graphs
     output$graph <- renderPlot({
@@ -88,7 +90,7 @@ server <- function(input, output) {
     })
     
     
-    #timeline
+    #timeline of key life events
     output$linegraph <- renderPlot({
         # age_buffer <- 2
         # age_range <- seq(min(kle_age_res$Age) - (age_buffer), max(kle_age_res$Age) + (age_buffer), by=1)
@@ -99,8 +101,8 @@ server <- function(input, output) {
         timeline_plot<- ggplot(kle_age_res(), aes(x=Age,y=0, label=Event))
         timeline_plot<- timeline_plot + 
             theme_classic() + 
-            labs(col="Events") +
-            scale_color_manual(values=status_colors, labels=status_levels, drop = FALSE)
+            labs(col="Events")
+            #scale_color_manual(values=status_colors, labels=status_levels, drop = FALSE)
         
         timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "black", size=0.3)
         
@@ -127,8 +129,12 @@ server <- function(input, output) {
         timeline_plot
     })
     
-    # output$marrtable({ 
-    #     kle_mar_res
+    # output$marrtable({
+    #     kle_mar_res%>%
+    #         gt()%>%
+    #         tab_header(
+    #             title = "Age Specific Marriage Rates"
+    #         )
     # })
 }
 
