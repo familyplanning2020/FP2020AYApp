@@ -20,8 +20,15 @@ kle_marriage <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
 
 ayfp <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 
-ayfp_sex <- ayfp %>% select(2,4,5,6,7)
-
+ayfp_sex <- ayfp %>% select(2,6,7)
+ayfp_never_sex <- ayfp %>% select(2,4,5)
+    
+# res4 <- ayfp_sex %>% filter(ayfp_sex$Country == "India")
+# res4$"15-19" <- res4$"Recent sex older adolescents aged 15-19"
+# res4$"20-24" <- res4$"Recent sex older youth aged 20-24"
+# res4 <- res4[,-1:-3]
+# res4 <- res4 %>% gather("Age Group", "Percent", "15-19" , "20-24")
+    
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -40,7 +47,8 @@ ui <- fluidPage(
         mainPanel(
            plotOutput("graph", width = "75%", height = "100px"),
            plotOutput("wide", width = "75%", height = "100px"),
-           plotOutput("linegraph", width = "75%", height = "200px")
+           plotOutput("linegraph", width = "75%", height = "200px"),
+           plotOutput("sexactivitygraph")
            # plotOutput("marrtable")
         )
     )
@@ -70,6 +78,19 @@ server <- function(input, output) {
     kle_mar_res <- reactive({
         res3 <- kle_marriage %>% filter(kle_marriage$Country == input$country)
         res3
+    })
+    
+    ayfp_sex_res <- reactive({
+        res4 <- ayfp_sex %>% filter(ayfp_sex$Country == input$country)
+        res4$"15-19" <- res4$"Recent sex older adolescents aged 15-19"
+        res4$"20-24" <- res4$"Recent sex older youth aged 20-24"
+        res4 <- res4[,-1:-3]
+        res4 <- res4 %>% gather("Age Group", "Percent", "15-19" , "20-24")
+    })
+    
+    output$sexactivitygraph({
+      fig <- plot_ly(ayfp_sex_res(), x = ~Percent, y = ~Age Group, type = 'bar', orientation = 'h')
+      fig
     })
     
     #designs the bar graphs
@@ -129,13 +150,6 @@ server <- function(input, output) {
         timeline_plot
     })
     
-    # output$marrtable({
-    #     kle_mar_res%>%
-    #         gt()%>%
-    #         tab_header(
-    #             title = "Age Specific Marriage Rates"
-    #         )
-    # })
 }
 
 # Run the application 
