@@ -1,5 +1,3 @@
-#hello, this is mabelle. so sorry. very bad at commenting code. if you download this and are confused, i am very sorry
-#will comment when i have the chance
 
 library(shiny)
 library(dplyr)
@@ -9,6 +7,7 @@ library(readxl)
 library(formattable)
 library(plotly)
 library(gt)
+library(plyr)
 
 #Pulling in data from excevl
 aypopdata <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYPOP")
@@ -21,14 +20,10 @@ kle_marriage <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
 ayfp <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 
 ayfp_sex <- ayfp %>% select(2,6,7)
-ayfp_never_sex <- ayfp %>% select(2,4,5)
-    
-# res4 <- ayfp_sex %>% filter(ayfp_sex$Country == "India")
-# res4$"15-19" <- res4$"Recent sex older adolescents aged 15-19"
-# res4$"20-24" <- res4$"Recent sex older youth aged 20-24"
-# res4 <- res4[,-1:-3]
-# res4 <- res4 %>% gather("Age Group", "Percent", "15-19" , "20-24")
-    
+#ayfp_never_sex <- ayfp %>% select(2,4,5)
+
+data.frame(colnames(ayfp))
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -40,16 +35,20 @@ ui <- fluidPage(
         sidebarPanel(
             selectInput("country",
                         "Select Country",
-                        choices = aypopdata.long$Country)
+                        choices = as.list(aypopdata.long$Country))
         ),
 
         # Shows the plots created in server function
         mainPanel(
-           plotOutput("graph", width = "75%", height = "100px"),
-           plotOutput("wide", width = "75%", height = "100px"),
-           plotOutput("linegraph", width = "75%", height = "200px"),
-           plotOutput("sexactivitygraph")
-           # plotOutput("marrtable")
+          # plotOutput("graph", width = "75%", height = "100px"),
+          # plotOutput("wide", width = "75%", height = "100px"),
+          # plotOutput("linegraph", width = "75%", height = "200px"),
+           plotOutput("sex_activity_graph", width = "50%", height = "100px"),
+           plotOutput("never_sex_graph", width = "50%", height = "100px"),
+           plotOutput("mod_con", width = "50%", height = "200px"),
+           plotOutput("mod_marr",  width = "50%", height = "200px"),
+           plotOutput("con_use", width = "50%", height = "100px")
+           
         )
     )
 )
@@ -80,26 +79,75 @@ server <- function(input, output) {
         res3
     })
     
+    #NEW PLOT
     ayfp_sex_res <- reactive({
-        res4 <- ayfp_sex %>% filter(ayfp_sex$Country == input$country)
+      
+        res4 <- ayfp %>% select(2,6,7)  %>% filter(ayfp$Country == input$country)
         res4$"15-19" <- res4$"Recent sex older adolescents aged 15-19"
         res4$"20-24" <- res4$"Recent sex older youth aged 20-24"
         res4 <- res4[,-1:-3]
-        res4 <- res4 %>% gather("Age Group", "Percent", "15-19" , "20-24")
+        res4.long <- res4 %>% gather("Age.Group", "Percent", "15-19" , "20-24")
+        res4.long
+        
     })
     
-    output$sexactivitygraph({
-      fig <- plot_ly(ayfp_sex_res(), x = ~Percent, y = ~Age Group, type = 'bar', orientation = 'h')
-      fig
+    output$sex_activity_graph <- renderPlot({
+        fig <- (ggplot(ayfp_sex_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
+        fig + coord_flip() + theme_classic() + 
+            geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+            labs(title = "Sexually Active %") + theme(axis.line.y=element_blank(),
+                                                    axis.text.y=element_blank(),
+                                                    axis.title.x=element_blank(),
+                                                    axis.title.y=element_blank(),
+                                                    axis.ticks.y=element_blank(),
+                                                    axis.text.x =element_blank(),
+                                                    axis.ticks.x =element_blank(),
+                                                    axis.line.x =element_blank(),
+                                                    legend.position = "bottom")
+          
+    })
+    #END PLOT
+    
+    
+    #NEW PLOT
+    ayfp_never_res <- reactive({
+      res5 <- ayfp %>% select(2,4,5) %>% filter(ayfp$Country == input$country)
+      ayfp_never_res
+      res5$"15-19" <- res5$"Never have had sex older adolescents aged 15-19"
+      res5$"20-24" <- res5$"Never have had sex older youth aged 20-24"
+      res5 <- res5[,-1:-3]
+      res5.long <- res5 %>% gather("Age.Group", "Percent", "15-19" , "20-24")
+      res5.long
     })
     
+    output$never_sex_graph <- renderPlot({
+      fig <- (ggplot(ayfp_never_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
+                                                                                                          
+      fig + coord_flip() + theme_classic() + 
+        geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+        labs(title= "Never Had Sex %") + theme(axis.line.y=element_blank(),
+                                               axis.text.y=element_blank(),
+                                               axis.title.x=element_blank(),
+                                               axis.title.y=element_blank(),
+                                               axis.ticks.y=element_blank(),
+                                               axis.text.x =element_blank(),
+                                               axis.ticks.x =element_blank(),
+                                               axis.line.x =element_blank(),
+                                               legend.position = "bottom")
+
+    })
+    #END PLOT
+    
+  
+
     #designs the bar graphs
     output$graph <- renderPlot({
         
         bar_one <- (ggplot(ay_res(), aes(Country, Count, fill = Age_Group)) + geom_bar(stat = "identity")
-        + labs(x="Country", y="Ages 15 to 49"))
+        + labs(x="Country", y="Women of Reproductive Age (15 to 49)"))
         
-        bar_one + theme_classic() + coord_flip()
+        bar_one + theme_minimal() + coord_flip() 
+        
     })
    
      #designs the bar graphs
@@ -148,6 +196,87 @@ server <- function(input, output) {
         timeline_plot <- timeline_plot + ggtitle("Key Life Events")
         
         timeline_plot
+    })
+    
+    
+
+    #NEW PLOT
+    ayfp_mod_res <- reactive({
+      res <- ayfp %>% select(2,8, 9) %>% filter(ayfp$Country == input$country)
+      res$`15-19` <- res$`MCPR for unmarried sexually active adolescents (15-19)**`
+      res$`20-24` <- res$`MCPR for unmarried sexually active youth (20-24)**`
+      res.long <- res %>% gather("Age.Group", "Percent", "15-19" , "20-24")
+      return(res.long)
+    })
+
+    output$mod_con <- renderPlot({
+      fig <- (ggplot(ayfp_mod_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
+
+      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+        labs(title= "Modern Contraceptive Use %", subtitle = "Unmarried Sexually Active %") + 
+        theme(axis.line.y=element_blank(),
+                                               axis.text.y=element_blank(),
+                                               axis.title.x=element_blank(),
+                                               axis.title.y=element_blank(),
+                                               axis.ticks.y=element_blank(),
+                                               axis.text.x =element_blank(),
+                                               axis.ticks.x =element_blank(),
+                                               axis.line.x =element_blank(),
+                                               legend.position = "bottom")
+
+    })
+    #END PLOT
+    
+    ### NEW PLOT Modern Contraceptive Use: Married Women
+    #Notes: Fix Decimal Points
+    
+    ayfp_mod_marr<- reactive({
+      res <- ayfp %>% select(2,10, 11, 12) %>% filter(ayfp$Country == input$country)
+      res$`15-19` <- res$`MCPR for married adolescents (15-19)`
+      res$`20-24` <- res$`MCPR for married youth (20-24)`
+      res$`15-24` <- res$`MCPR for married adolescent and youth (15-24)`
+      res.long <- res %>% gather("Age.Group", "Percent", "15-19" , "20-24", "15-24")
+      return(res.long)
+    })
+    
+    output$mod_marr <- renderPlot({
+      fig <- (ggplot(ayfp_mod_marr(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
+      
+      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + labs(subtitle = "Married Women %") +
+        theme(axis.line.y=element_blank(),
+              axis.text.y=element_blank(),
+              axis.title.x=element_blank(),
+              axis.title.y=element_blank(),
+              axis.ticks.y=element_blank(),
+              axis.text.x =element_blank(),
+              axis.ticks.x =element_blank(),
+              axis.line.x =element_blank(),
+              legend.position = "bottom")
+    })
+    
+    #END PLOT
+    
+    #NEW PLOT
+    ayfp_con_res<- reactive({
+      res <- ayfp %>% select(2,29) %>% filter(ayfp$Country == input$country)
+      res$`15-24` <- res$`Condom use during last sex: 15-24 year olds`
+      res.long <- res %>% gather("Age.Group", "Percent", "15-24")
+      return(res.long)
+    })
+    
+    output$con_use <- renderPlot({
+      fig <- (ggplot(ayfp_con_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
+      
+      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + labs(subtitle = "Condom Use During Last Sex %") +
+        theme(axis.line.y=element_blank(),
+              axis.text.y=element_blank(),
+              axis.title.x=element_blank(),
+              axis.title.y=element_blank(),
+              axis.ticks.y=element_blank(),
+              axis.text.x =element_blank(),
+              axis.ticks.x =element_blank(),
+              axis.line.x =element_blank(),
+              legend.position = "bottom")
     })
     
 }
