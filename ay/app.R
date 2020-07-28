@@ -21,7 +21,7 @@ data.frame(colnames(ayfp))
 
 cbp1 <- c("#E6A0C4", "#C6CDF7", "#D8A499", "#7294D4")
 
-# Define UI for application that draws a histogram
+# Define UI for application 
 ui <- fluidPage(
 
     # Application title
@@ -65,38 +65,38 @@ ui <- fluidPage(
               fluidRow(
                 titlePanel("Sexual Activity %"),
                 column(6,
-                  plotOutput("sex_activity_graph", width = "50%", height = "100px")
+                  plotOutput("sex_activity_graph", width = "60%", height = "200px")
                 ),
                 column(6,
-                  plotOutput("never_sex_graph", width = "50%", height = "100px")
-
+                  plotOutput("never_sex_graph", width = "60%", height = "200px")
                 ),
               ),
 
               fluidRow(
                 titlePanel("Modern Contraceptive Prevalence %"),
                 column(4,
-                       plotOutput("mod_con", width = "50%", height = "150px")
+                       plotOutput("mod_con", width = "60%", height = "200px")
                 ),
                 column(4,
-                       plotOutput("mod_marr",  width = "50%", height = "150px")
+                       plotOutput("mod_marr",  width = "60%", height = "200px")
                 ),
                 column(4,
-                       plotOutput("con_use", width = "50%", height = "150px")
+                       plotOutput("con_use", width = "60%", height = "200px")
+                )
+              ),
+              
+              fluidRow(
+                titlePanel("Traditional Method Use"),
+                column(6,
+                    plotOutput("trad_unmarr", height = "300px")
+                ),
+                column(6,
+                    plotOutput("trad_marr", height = "300px")
                 )
               )
       ),
     )
 )
-           #  plotOutput("graph", width = "75%", height = "100px"),
-           #  plotOutput("wide", width = "75%", height = "100px"),
-           #  plotOutput("linegraph", width = "75%", height = "200px"),
-           # plotOutput("sex_activity_graph", width = "50%", height = "100px"),
-           # plotOutput("never_sex_graph", width = "50%", height = "100px"),
-           # plotOutput("mod_con", width = "50%", height = "200px"),
-           # plotOutput("mod_marr",  width = "50%", height = "200px"),
-           # plotOutput("con_use", width = "50%", height = "100px")
-
 
 # Draw Bargraphs and Figures
 server <- function(input, output) {
@@ -248,8 +248,8 @@ server <- function(input, output) {
                                               legend.position = "bottom"
         )
         timeline_plot <- timeline_plot +  
-          geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5) + 
-          geom_text(aes (x = Age, y = 0.05, label = ""), size = 3.5) +
+          geom_text(aes (x = Age, y = -0.05, label = Age, color = "black"), size = 3.5, color = "black") + 
+          geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) +
           ggtitle("Median Age at First Marriage, Sex and Birth")
         timeline_plot
     })
@@ -269,7 +269,7 @@ server <- function(input, output) {
       fig <- (ggplot(ayfp_mod_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
 
       fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-        labs(title= "Modern Contraceptive Use %", subtitle = "Unmarried Sexually Active %") + 
+        labs( subtitle = "Unmarried Sexually Active %") + 
         scale_fill_manual(values = cbp1) + 
         theme(axis.line.y=element_blank(),
                                                axis.text.y=element_blank(),
@@ -341,6 +341,60 @@ server <- function(input, output) {
               legend.position = "bottom")
     })
     
+    #TRADITIONAL USE PLOTS START
+    #NEW PLOT: UNMARRIED SEXUALLY ACTIVE
+    ayfp_trad_unmarr<- reactive({
+      res <- ayfp %>% select(2,13,14) %>% filter(ayfp$Country == input$country)
+      res$`15-19` <- res$`% of unmarried sexually active** older adolescents aged 15-19 using a traditional method`
+      res$`20-24` <- res$`% of unmarried sexually active** older youth aged 20-24 using a traditional method`
+    
+      res.long <- res %>% gather("Age.Group", "Percent", "15-19", "20-24")
+      
+    })
+    
+    output$trad_unmarr <- renderPlot({
+      fig <- (ggplot(ayfp_trad_unmarr(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
+      
+      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+        labs(subtitle = "Unmarried Sexually Active %") +
+        scale_fill_manual(values = cbp1) + 
+        theme(axis.line.y=element_blank(),
+              axis.text.y=element_blank(),
+              axis.title.x=element_blank(),
+              axis.title.y=element_blank(),
+              axis.ticks.y=element_blank(),
+              axis.text.x =element_blank(),
+              axis.ticks.x =element_blank(),
+              axis.line.x =element_blank(),
+              legend.position = "bottom")
+    })
+    
+    #NEW PLOT
+    ayfp_trad_marr<- reactive({
+      res <- ayfp %>% select(2,15,16,17) %>% filter(ayfp$Country == input$country)
+      res$`15-19` <- res$`% of married older adolescents aged 15-19 using a traditional method`
+      res$`20-24` <- res$`% of married older youth aged 20-24 using a traditional method`
+      res$`15-24` <- res$`% of married youth aged 15-24 using a traditional method`
+      
+      res.long <- res %>% gather("Age.Group", "Percent", "15-19", "20-24", "15-24")
+    })
+    
+    output$trad_marr <- renderPlot({
+      fig <- (ggplot(ayfp_trad_marr(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
+      
+      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+        labs(subtitle = "Married Sexually Active %") +
+        scale_fill_manual(values = cbp1) + 
+        theme(axis.line.y=element_blank(),
+              axis.text.y=element_blank(),
+              axis.title.x=element_blank(),
+              axis.title.y=element_blank(),
+              axis.ticks.y=element_blank(),
+              axis.text.x =element_blank(),
+              axis.ticks.x =element_blank(),
+              axis.line.x =element_blank(),
+              legend.position = "bottom")
+    })
 }
 
 # Run the application 
