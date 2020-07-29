@@ -17,9 +17,13 @@ kle_age <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
 kle_marriage <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
 ayfp <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 
+res3 <- kle_marriage %>% filter(kle_marriage$Country == "India")
+data.frame(colnames(res3))
+
 data.frame(colnames(ayfp))
 
 cbp1 <- c("#E6A0C4", "#C6CDF7", "#D8A499", "#7294D4")
+
 
 # Define UI for application 
 ui <- fluidPage(
@@ -59,6 +63,7 @@ ui <- fluidPage(
                        plotOutput("linegraph", width = "75%", height = "200px")
                 ),
                 column(4,
+                       tableOutput("table")
                 ),
               ),
               
@@ -155,6 +160,8 @@ server <- function(input, output) {
         res3
     })
     
+    output$table <- renderTable(kle_mar_res())
+    
     #NEW PLOT:Recent Sexual Activity 
     ayfp_sex_res <- reactive({
       
@@ -218,24 +225,21 @@ server <- function(input, output) {
     kle_age_res <- reactive({
         res2 <- kle_age %>% filter(kle_age$Country == input$country)
         res2.long <- res2 %>% gather(Event, Age, `First Marriage`,`First Sex`, `First Birth`)
-        status_levels <- c("First Marriage", "First Sex", "First Birth")
-        status_colors <- c("#C6CDF7", "#D8A499", "#7294D4")
-        df$status <- factor(res2.long$Event, levels=status_levels, ordered=TRUE)
         res2.long
     })
     
     output$linegraph <- renderPlot({
 
         #Create Plot
-        timeline_plot<- ggplot(kle_age_res(), aes(x=Age,y=0, col=Event, label=Event))
+        timeline_plot<- ggplot(kle_age_res(), aes(x=Age, y=0, col=Event, label=Event))
         timeline_plot<- timeline_plot + 
             theme_classic() + 
             labs(col="Events") + 
-            scale_color_manual(values=cbp1, labels=status_levels, drop = FALSE)
+            scale_color_manual(values = cbp1)
         
         timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "black", size=0.4)
       
-        timeline_plot<-timeline_plot+geom_point(aes(y=0), size=5) 
+        timeline_plot<- timeline_plot + geom_point(aes(y=0), size=5) 
         
         timeline_plot<- timeline_plot + theme(axis.line.y=element_blank(),
                                               axis.text.y=element_blank(),
@@ -248,7 +252,7 @@ server <- function(input, output) {
                                               legend.position = "bottom"
         )
         timeline_plot <- timeline_plot +  
-          geom_text(aes (x = Age, y = -0.05, label = Age, color = "black"), size = 3.5, color = "black") + 
+          geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5, color = "black") + 
           geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) +
           ggtitle("Median Age at First Marriage, Sex and Birth")
         timeline_plot
