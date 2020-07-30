@@ -37,86 +37,83 @@ data.frame(colnames(res3))
 
 data.frame(colnames(ayfp))
 
-cbp1 <- c("#E6A0C4", "#C6CDF7", "#D8A499", "#7294D4")
+cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4fb3ff", "#00158a")
 
 
 # Define UI for application 
-ui <- fluidPage(
-
-    # Application title
-    titlePanel("AY Data R Applet"),
-    
-    fluidRow(
-      column(2,
-        wellPanel(
-          selectInput("country",
-                      "Select Country",
-                      choices = as.list(aypopdata.long$Country))
+ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
+                 tabPanel("Profile",
+                          fluidRow(
+                            column(6,
+                                   wellPanel(
+                                     selectInput("country",
+                                                 "Select Country",
+                                                 choices = as.list(aypopdata.long$Country))
+                                   )
+                            ),
+                            column(6,
+                            )),
+                          fluidRow( 
+                            titlePanel("Adolescent & Youth Population"),
+                            column(8,
+                                   plotOutput("graph", width = "100%", height = "150px")    
+                            ),
+                            column(4,
+                                   ),
+                            ),
+                          
+                           fluidRow(
+                             column(8,
+                                    plotOutput("wide", width = "100%", height = "150px")
+                             ),
+                             column(4,
+                                    ),
+                             ),
+                          
+                          fluidRow(
+                            titlePanel("Key Life Events"),
+                            column(8,
+                                   plotOutput("linegraph", width = "75%", height = "200px")
+                                   ),
+                            column(4,
+                                   tableOutput("table")
+                                   ),
+                            ),
+                          fluidRow(
+                            titlePanel("Sexual Activity %"),
+                            column(6,
+                                   plotOutput("sex_activity_graph", width = "60%", height = "200px")
+                            ),
+                            column(6,
+                                   plotOutput("never_sex_graph", width = "60%", height = "200px")
+                            ),
+                          ),
+                          fluidRow(
+                            titlePanel("Modern Contraceptive Prevalence %"),
+                            column(4,
+                                     plotOutput("mod_con", width = "60%", height = "200px")
+                             ),
+                            column(4,
+                                     plotOutput("mod_marr",  width = "60%", height = "200px")
+                            ),
+                            column(4,
+                                     plotOutput("con_use", width = "60%", height = "200px")
+                            )
+                          ),
+                          fluidRow(
+                            titlePanel("Traditional Method Use"),
+                            column(6,
+                                   plotOutput("trad_unmarr", height = "300px")
+                            ),
+                            column(6,
+                                   plotOutput("trad_marr", height = "300px")
+                            )
+                          )
+                     ),
+                   
+                 tabPanel("Compare"),
+                 tabPanel("Analyze")
         )
-      ),
-      
-      column (10,
-              fluidRow(
-                titlePanel("Adolescent & Youth Population"),
-                column(8,
-                      plotOutput("graph", width = "100%", height = "150px")    
-                ),
-                column(4,
-                ),
-              ),
-              fluidRow(
-                column(8,
-                       plotOutput("wide", width = "100%", height = "150px")
-                ),
-                column(4,
-                ),
-              ),
-              
-              fluidRow(
-                titlePanel("Key Life Events"),
-                column(8,
-                       plotOutput("linegraph", width = "75%", height = "200px")
-                ),
-                column(4,
-                       tableOutput("table")
-                ),
-              ),
-              
-              fluidRow(
-                titlePanel("Sexual Activity %"),
-                column(6,
-                  plotOutput("sex_activity_graph", width = "60%", height = "200px")
-                ),
-                column(6,
-                  plotOutput("never_sex_graph", width = "60%", height = "200px")
-                ),
-              ),
-
-              fluidRow(
-                titlePanel("Modern Contraceptive Prevalence %"),
-                column(4,
-                       plotOutput("mod_con", width = "60%", height = "200px")
-                ),
-                column(4,
-                       plotOutput("mod_marr",  width = "60%", height = "200px")
-                ),
-                column(4,
-                       plotOutput("con_use", width = "60%", height = "200px")
-                )
-              ),
-              
-              fluidRow(
-                titlePanel("Traditional Method Use"),
-                column(6,
-                    plotOutput("trad_unmarr", height = "300px")
-                ),
-                column(6,
-                    plotOutput("trad_marr", height = "300px")
-                )
-              )
-      ),
-    )
-)
 
 # Draw Bargraphs and Figures
 server <- function(input, output) {
