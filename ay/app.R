@@ -8,9 +8,8 @@ library(formattable)
 library(plotly)
 library(gt)
 library(plyr)
-library(wesanderson)
 
-#Pulling in data from excevl
+#Pulling in data from excel
 aypopdata <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYPOP")
 aypopdata.long <- aypopdata %>% gather(Age_Group,Count,`Young Adolescents (10-14)`,`Older Adolescents (15-19)`,`Older Youth (20-24)`)
 kle_age <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
@@ -18,6 +17,22 @@ kle_marriage <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
 ayfp <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 
 res3 <- kle_marriage %>% filter(kle_marriage$Country == "India")
+res3 %>%
+  gather(`Age Group`, `Married`, `% of 15-19 year olds who are married`,`% of 20-24 year olds who are married`,
+         `% of adolescent and youth (15-24) who are married`, `% of 20-24 year olds married before 18`,
+         `% of 25-29 year olds married before 18`)
+res3[1,1]
+
+table1 <- matrix(c(res3[[1,2]], NA, res3[[1,3]], res3[[1,5]], res3[[1,4]], NA, NA, res3[[1,6]]), ncol = 2, byrow = TRUE)
+colnames(table1) <- c("% Married", "% Married before 18 Years Old")
+rownames(table1) <- c("15-19", "20-24", "15-24", "25-29")
+table2 <- as.table(table1)
+
+table2
+
+res3[[1,2]]
+smoke <- matrix(c(51,43,22,92,28,21,68,22,9),ncol=3,byrow=TRUE)
+
 data.frame(colnames(res3))
 
 data.frame(colnames(ayfp))
@@ -157,7 +172,13 @@ server <- function(input, output) {
     #TO BE COMPLETED
     kle_mar_res <- reactive({
         res3 <- kle_marriage %>% filter(kle_marriage$Country == input$country)
-        res3
+        table1 <- matrix(c(res3[[1,2]], NA, res3[[1,3]], res3[[1,5]], res3[[1,4]], NA, NA, res3[[1,6]]), ncol = 2, byrow = TRUE)
+        colnames(table1) <- c("% Married", "% Married before 18 Years Old")
+        rownames(table1) <- c("15-19", "20-24", "15-24", "25-29")
+        table2 <- as.table(table1)
+        
+        table2
+        
     })
     
     output$table <- renderTable(kle_mar_res())
