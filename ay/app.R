@@ -1,4 +1,11 @@
 
+list.of.packages <- c("shiny", "dplyr", "ggplot2", "tidyr",
+                      "readxl", "formattable", "plotly", "gt",
+                      "plyr", "factorial2x2")
+
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library(shiny)
 library(dplyr)
 library(ggplot2)
@@ -8,13 +15,15 @@ library(formattable)
 library(plotly)
 library(gt)
 library(plyr)
+library(factorial2x2)
+
 
 #Pulling in data from excel
-aypopdata <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYPOP")
+aypopdata <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYPOP")
 aypopdata.long <- aypopdata %>% gather(Age_Group,Count,`Young Adolescents (10-14)`,`Older Adolescents (15-19)`,`Older Youth (20-24)`)
-kle_age <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
-kle_marriage <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
-ayfp <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYFPUse")
+kle_age <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
+kle_marriage <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
+ayfp <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 
 res3 <- kle_marriage %>% filter(kle_marriage$Country == "India")
 res3 %>%
@@ -36,6 +45,11 @@ smoke <- matrix(c(51,43,22,92,28,21,68,22,9),ncol=3,byrow=TRUE)
 data.frame(colnames(res3))
 
 data.frame(colnames(ayfp))
+
+# Round the counts of AY popualtion & WRA Population  ==> SHIZA DID THIS <== 
+aypopdata.long$Round_Count <- round(aypopdata.long$Count, -5)
+aypopdata.long$Round_Count_WRA <- round(aypopdata.long$`Women of Reproductive Age (15-49)`, -5)
+
 
 cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4fb3ff", "#00158a")
 
@@ -125,7 +139,7 @@ server <- function(input, output) {
     
     output$graph <- renderPlot({
       bar_one <- (ggplot(ay_res(), aes(Country, Count, fill = Age_Group)) + geom_bar(stat = "identity") + 
-                  geom_text(aes(label=`Count`), color="black", size=3.5, position = position_stack(vjust = 0.5)))
+                  geom_text(aes(label=`Round_Count`), color="black", size=3.5, position = position_stack(vjust = 0.5)))
       bar_one + theme_classic() + coord_flip() + labs(subtitle = "Adolescents and Youth") + scale_fill_manual(values = cbp1) + theme(axis.line.y=element_blank(),
                                                                                         axis.text.y=element_blank(),
                                                                                         axis.title.y=element_blank(),
@@ -149,7 +163,7 @@ server <- function(input, output) {
       bartwo <- (ggplot(small_ay_res(), aes(Country, `Women of Reproductive Age (15-49)`)) +
                    geom_bar(stat = "identity", fill = "#7294D4") + 
                    labs(subtitle = "Women of Reproductive Age (15-49)")  +
-                   geom_text(aes(label=`Women of Reproductive Age (15-49)`), color="black", size=3.50, hjust = 5.0))
+                   geom_text(aes(label=Round_Count_WRA), color="black", size=3.50, hjust = 5.0))
       
       bartwo + theme_classic() + coord_flip()  + theme(axis.line.y=element_blank(),
                                                      axis.text.y=element_blank(),
