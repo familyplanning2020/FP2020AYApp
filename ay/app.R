@@ -1,7 +1,7 @@
 
 list.of.packages <- c("shiny", "dplyr", "ggplot2", "tidyr",
                       "readxl", "formattable", "plotly", "gt",
-                      "plyr", "factorial2x2")
+                      "plyr", "factorial2x2", "shinyBS")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
@@ -16,14 +16,15 @@ library(plotly)
 library(gt)
 library(plyr)
 library(factorial2x2)
+library(shinyBS)
 
 
 #Pulling in data from excel
-aypopdata <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYPOP")
+aypopdata <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYPOP")
 aypopdata.long <- aypopdata %>% gather(Age_Group,Count,`Young Adolescents (10-14)`,`Older Adolescents (15-19)`,`Older Youth (20-24)`)
-kle_age <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
-kle_marriage <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
-ayfp <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYFPUse")
+kle_age <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
+kle_marriage <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
+ayfp <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 
 # Round the counts of AY popualtion & WRA Population  ==> SHIZA DID THIS <== 
 aypopdata.long$Round_Count <- round(aypopdata.long$Count, -5)
@@ -74,27 +75,41 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             ),
                           fluidRow(
                             titlePanel("Sexual Activity %"),
-                            column(6,
+                            column(6, uiOutput("infoRecent"),
                                    plotOutput("sex_activity_graph", width = "60%", height = "200px")
                             ),
-                            column(6,
+                            column(6, uiOutput("infoNever"),
                                    plotOutput("never_sex_graph", width = "60%", height = "200px")
                             ),
                           ),
                           fluidRow(
-                            titlePanel("Modern Contraceptive Prevalence %"),
+                            column(7, 
+                                   titlePanel("Modern Contraceptive Prevalence %")
+                            ),
+                            column(5,
+                                   uiOutput("info1"),
+                            )
+                          ),
+                          fluidRow(
                             column(4,
-                                     plotOutput("mod_con", width = "60%", height = "200px")
-                             ),
+                                   plotOutput("mod_con", width = "60%", height = "200px")
+                            ),
                             column(4,
                                      plotOutput("mod_marr",  width = "60%", height = "200px")
                             ),
-                            column(4,
+                            column(4, uiOutput("infoCondom"),
                                      plotOutput("con_use", width = "60%", height = "200px")
                             )
                           ),
                           fluidRow(
-                            titlePanel("Traditional Method Use"),
+                            column(5, 
+                                   titlePanel("Traditional Method Use")
+                            ),
+                            column(7,
+                                   uiOutput("info2"),
+                            )
+                          ),
+                          fluidRow(
                             column(6,
                                    plotOutput("trad_unmarr", height = "300px")
                             ),
@@ -133,6 +148,46 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
 
 # Draw Bargraphs and Figures
 server <- function(input, output) {
+  
+  output$info1 <- renderUI({
+    tags$span(
+      popify(bsButton("info1", "?", style = "primary", size = "extra-small"), 
+             "Definition",
+             "Percentage of women using a modern contraceptive method, disaggregated by current marriage status, sexual activity, and age."),
+    )
+  })
+  
+  output$info2 <- renderUI({
+    tags$span(
+      popify(bsButton("info2", "?", style = "primary", size = "extra-small"), 
+             "Definition",
+             "Percentage of women using a traditional contraceptive method, disaggregated by current marriage status, sexual activity, and age."),
+    )
+  })
+  
+  output$infoNever <- renderUI({
+    tags$span(
+      popify(bsButton("infoNever", "?", style = "primary", size = "extra-small"), 
+             "Definition",
+             "Percentage of women who never had intercourse"),
+    )
+  })
+  
+  output$infoRecent <- renderUI({
+    tags$span(
+      popify(bsButton("infoRecent", "?", style = "primary", size = "extra-small"), 
+             "Definition",
+             "Percentage of women who were sexually activity in the four weeks preceding the survey"),
+    )
+  })
+  
+  output$infoCondom <- renderUI({
+    tags$span(
+      popify(bsButton("infoCondom", "?", style = "primary", size = "extra-small"), 
+             "Definition",
+             "Percentage of young women age 15-24 who reported using a condom at last sexual intercourse, of all young women who had sex with more than one partner in the 12 months preceding the survey"),
+    )
+  })
    
    #NEW PLOT: Population by Age Groups
     ay_res <- reactive({
