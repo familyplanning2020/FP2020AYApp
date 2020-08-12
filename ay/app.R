@@ -25,36 +25,11 @@ kle_age <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
 kle_marriage <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
 ayfp <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 
-<<<<<<< HEAD
-res3 <- kle_marriage %>% filter(kle_marriage$Country == "India")
-res3 %>%
-  gather(`Age Group`, `Married`, `% of 15-19 year olds who are married`,`% of 20-24 year olds who are married`,
-         `% of adolescent and youth (15-24) who are married`, `% of 20-24 year olds married before 18`,
-         `% of 25-29 year olds married before 18`)
-res3[1,1]
-
-table1 <- matrix(c(res3[[1,2]], NA, res3[[1,3]], res3[[1,5]], res3[[1,4]], NA, NA, res3[[1,6]]), ncol = 2, byrow = TRUE)
-colnames(table1) <- c("% Married", "% Married before 18 Years Old")
-rownames(table1) <- c("15-19", "20-24", "15-24", "25-29")
-table2 <- as.table(table1)
-
-table2
-
-res3[[1,2]]
-smoke <- matrix(c(51,43,22,92,28,21,68,22,9),ncol=3,byrow=TRUE)
-
-data.frame(colnames(res3))
-
-data.frame(colnames(ayfp))
-
 # Round the counts of AY popualtion & WRA Population  ==> SHIZA DID THIS <== 
 aypopdata.long$Round_Count <- round(aypopdata.long$Count, -5)
 aypopdata.long$Round_Count_WRA <- round(aypopdata.long$`Women of Reproductive Age (15-49)`, -5)
 
-
-=======
 #FP2020 Colors
->>>>>>> 2786517e5c218267caff2fc519fb213573fe04ca
 cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4fb3ff", "#00158a")
 
 
