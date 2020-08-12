@@ -28,7 +28,7 @@ ayfp <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 
 # Round the counts of AY popualtion & WRA Population  ==> SHIZA DID THIS <== 
 aypopdata.long$Round_Count <- round(aypopdata.long$Count, -5)
-aypopdata.long$Round_Count_WRA <- round(aypopdata.long$`Women of Reproductive Age (15-49)`, -5)
+aypopdata$Round_Count_WRA <- round(aypopdata$`Women of Reproductive Age (15-49)`, -5)
 
 #FP2020 Colors
 cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4fb3ff", "#00158a")
