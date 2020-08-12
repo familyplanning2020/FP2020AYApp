@@ -25,6 +25,7 @@ kle_age <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
 kle_marriage <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
 ayfp <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 
+<<<<<<< HEAD
 res3 <- kle_marriage %>% filter(kle_marriage$Country == "India")
 res3 %>%
   gather(`Age Group`, `Married`, `% of 15-19 year olds who are married`,`% of 20-24 year olds who are married`,
@@ -51,6 +52,9 @@ aypopdata.long$Round_Count <- round(aypopdata.long$Count, -5)
 aypopdata.long$Round_Count_WRA <- round(aypopdata.long$`Women of Reproductive Age (15-49)`, -5)
 
 
+=======
+#FP2020 Colors
+>>>>>>> 2786517e5c218267caff2fc519fb213573fe04ca
 cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4fb3ff", "#00158a")
 
 
@@ -122,10 +126,33 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             column(6,
                                    plotOutput("trad_marr", height = "300px")
                             )
+                          ),
+                          fluidRow(
+                            titlePanel("More Information"),
+                            column(12,
+                                   tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
+                                   tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
+                                   tags$h2(""), "The code used to create this App can be found on our",
+                                   tags$a(href = "https://github.com/mabellezhang/AYData.git", "GitHub Account")
+                            ),
+                            
                           )
                      ),
-                   
-                 tabPanel("Compare"),
+                 tabPanel("Compare",
+                          fluidRow(
+                            column(6,
+                                   wellPanel(
+                                     selectizeInput("country",
+                                                    "Select Up to 4 Countries to Compare",
+                                                    choices = as.list(aypopdata.long$Country),
+                                                    multiple = TRUE,
+                                                    options = list(maxItems = 4))
+                                   )
+                            ),
+                            column(6,
+                            )),
+                          
+                 ),
                  tabPanel("Analyze")
         )
 
@@ -135,6 +162,8 @@ server <- function(input, output) {
    #NEW PLOT: Population by Age Groups
     ay_res <- reactive({
         res <- aypopdata.long %>% filter(aypopdata.long$Country == input$country)
+        req(nrow(res) > 0)
+        res
     })
     
     output$graph <- renderPlot({
@@ -156,6 +185,8 @@ server <- function(input, output) {
     #NEW PLOT: Women of Reproductive Age
     small_ay_res <- reactive({
         res1 <- aypopdata %>% filter(aypopdata$Country == input$country)
+        req(nrow(res1) > 0)
+        res1
     })
 
     output$wide <- renderPlot({
@@ -183,6 +214,7 @@ server <- function(input, output) {
     #TO BE COMPLETED
     kle_mar_res <- reactive({
         res3 <- kle_marriage %>% filter(kle_marriage$Country == input$country)
+        req(nrow(res3) > 0)
         table1 <- matrix(c(res3[[1,2]], NA, res3[[1,3]], res3[[1,5]], res3[[1,4]], NA, NA, res3[[1,6]]), ncol = 2, byrow = TRUE)
         colnames(table1) <- c("% Married", "% Married before 18 Years Old")
         rownames(table1) <- c("15-19", "20-24", "15-24", "25-29")
@@ -198,6 +230,7 @@ server <- function(input, output) {
     ayfp_sex_res <- reactive({
       
         res4 <- ayfp %>% select(2,6,7)  %>% filter(ayfp$Country == input$country)
+        req(nrow(res4) > 0)
         res4$"15-19" <- res4$"Recent sex older adolescents aged 15-19"
         res4$"20-24" <- res4$"Recent sex older youth aged 20-24"
         res4 <- res4[,-1:-3]
@@ -227,6 +260,7 @@ server <- function(input, output) {
     #NEW PLOT: Ever Sexual Activity 
     ayfp_never_res <- reactive({
       res5 <- ayfp %>% select(2,4,5) %>% filter(ayfp$Country == input$country)
+      req(nrow(res5) > 0)
       ayfp_never_res
       res5$"15-19" <- res5$"Never have had sex older adolescents aged 15-19"
       res5$"20-24" <- res5$"Never have had sex older youth aged 20-24"
@@ -256,6 +290,7 @@ server <- function(input, output) {
     #timeline of key life events
     kle_age_res <- reactive({
         res2 <- kle_age %>% filter(kle_age$Country == input$country)
+        req(nrow(res2) > 0)
         res2.long <- res2 %>% gather(Event, Age, `First Marriage`,`First Sex`, `First Birth`)
         res2.long
     })
@@ -269,9 +304,9 @@ server <- function(input, output) {
             labs(col="Events") + 
             scale_color_manual(values = cbp1)
         
-        timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "black", size=0.4)
+        timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "black", size=1)
       
-        timeline_plot<- timeline_plot + geom_point(aes(y=0), size=5) 
+        timeline_plot<- timeline_plot + geom_point(aes(y=0), size=6) 
         
         timeline_plot<- timeline_plot + theme(axis.line.y=element_blank(),
                                               axis.text.y=element_blank(),
@@ -295,10 +330,11 @@ server <- function(input, output) {
     #NEW PLOT
     ayfp_mod_res <- reactive({
       res <- ayfp %>% select(2,8, 9) %>% filter(ayfp$Country == input$country)
+      req(nrow(res) > 0)
       res$`15-19` <- res$`MCPR for unmarried sexually active adolescents (15-19)**`
       res$`20-24` <- res$`MCPR for unmarried sexually active youth (20-24)**`
       res.long <- res %>% gather("Age.Group", "Percent", "15-19" , "20-24")
-      return(res.long)
+      res.long
     })
 
     output$mod_con <- renderPlot({
@@ -325,12 +361,14 @@ server <- function(input, output) {
     
     ayfp_mod_marr<- reactive({
       res <- ayfp %>% select(2,10, 11, 12) %>% filter(ayfp$Country == input$country)
+      req(nrow(res) > 0)
+      
       res$`15-19` <- res$`MCPR for married adolescents (15-19)`
       res$`20-24` <- res$`MCPR for married youth (20-24)`
       res$`15-24` <- res$`MCPR for married adolescent and youth (15-24)`
     
       res.long <- res %>% gather("Age.Group", "Percent", "15-19" , "20-24", "15-24")
-      return(res.long)
+      res.long
     })
     
     output$mod_marr <- renderPlot({
@@ -355,6 +393,8 @@ server <- function(input, output) {
     #NEW PLOT
     ayfp_con_res<- reactive({
       res <- ayfp %>% select(2,29) %>% filter(ayfp$Country == input$country)
+      req(nrow(res) > 0)
+      
       res$`15-24` <- res$`Condom use during last sex: 15-24 year olds`
       res.long <- res %>% gather("Age.Group", "Percent", "15-24")
     
@@ -381,6 +421,8 @@ server <- function(input, output) {
     #NEW PLOT: UNMARRIED SEXUALLY ACTIVE
     ayfp_trad_unmarr<- reactive({
       res <- ayfp %>% select(2,13,14) %>% filter(ayfp$Country == input$country)
+      req(nrow(res) > 0)
+      
       res$`15-19` <- res$`% of unmarried sexually active** older adolescents aged 15-19 using a traditional method`
       res$`20-24` <- res$`% of unmarried sexually active** older youth aged 20-24 using a traditional method`
     
@@ -408,6 +450,8 @@ server <- function(input, output) {
     #NEW PLOT
     ayfp_trad_marr<- reactive({
       res <- ayfp %>% select(2,15,16,17) %>% filter(ayfp$Country == input$country)
+      req(nrow(res) > 0)
+      
       res$`15-19` <- res$`% of married older adolescents aged 15-19 using a traditional method`
       res$`20-24` <- res$`% of married older youth aged 20-24 using a traditional method`
       res$`15-24` <- res$`% of married youth aged 15-24 using a traditional method`
