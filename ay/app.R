@@ -40,7 +40,7 @@ cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4f
 # Define UI for application 
 ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                 #builds Tab for Profile Page
-                  tabPanel("How to Use",
+                tabPanel("How to Use",
                            HTML(
                              paste(
                                h1("General Info"),'<br/>',
@@ -49,7 +49,8 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                                h4("Click on the Tabs above to explore."),'<br/>',
                                h4("The Profile Page ..."),'<br/>',
                                h4("The Compare Page ..."),'<br/>',
-                               h4("The Analyze Page ..."),'<br/>'
+                               h4("The Analyze Page ..."),'<br/>',
+                               img(src = "FP2020_RGB.jpeg", align = "right")
                              )
                            )     
                   ),
