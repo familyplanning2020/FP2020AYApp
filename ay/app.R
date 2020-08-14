@@ -40,7 +40,26 @@ cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4f
 # Define UI for application 
 ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                 #builds Tab for Profile Page
+                  tabPanel("How to Use",
+                           HTML(
+                             paste(
+                               h1("General Info"),'<br/>',
+                               h3("What is this?"),'<br/>',
+                               h4("This is an App by FP2020. info info info"),'<br/>',
+                               h4("Click on the Tabs above to explore."),'<br/>',
+                               h4("The Profile Page ..."),'<br/>',
+                               h4("The Compare Page ..."),'<br/>',
+                               h4("The Analyze Page ..."),'<br/>'
+                             )
+                           )     
+                  ),
                   tabPanel("Profile",
+                          HTML(
+                            paste(
+                              h1("Profile"),
+                              h3("Select a Country to Learn about its Adolescent and Youth Data"), '<br/>', '<br/>'
+                            )
+                          ),
                           fluidRow(
                             column(6,
                                    wellPanel(
@@ -52,14 +71,17 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             column(6,
                             )),
                           fluidRow( 
-                            titlePanel("Adolescent & Youth Population"),
+                            HTML(
+                              paste(
+                                h3("Adolescent & Youth Population"), '<br/>'
+                              )
+                            ),
                             column(8,
                                    plotOutput("graph", width = "100%", height = "150px")    
                             ),
                             column(4,
-                                   ),
+                                   )
                             ),
-                          
                            fluidRow(
                              column(8,
                                     plotOutput("wide", width = "100%", height = "150px")
@@ -69,7 +91,8 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                              ),
                           
                           fluidRow(
-                            titlePanel("Key Life Events"),
+                            HTML( paste(h3("Key Life Events"), '<br/>')
+                                  ),
                             column(8,
                                    plotOutput("linegraph", width = "75%", height = "200px")
                                    ),
@@ -78,7 +101,12 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                                    ),
                             ),
                           fluidRow(
-                            titlePanel("Sexual Activity %"),
+                            HTML(
+                              paste(
+                                h3("Sexual Activity %"), '<br/>'
+                              )
+                            ),
+                           
                             column(6, uiOutput("infoRecent"),
                                    plotOutput("sex_activity_graph", width = "60%", height = "200px")
                             ),
@@ -86,15 +114,9 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                                    plotOutput("never_sex_graph", width = "60%", height = "200px")
                             ),
                           ),
-                          fluidRow(
-                            column(7, 
-                                   titlePanel("Modern Contraceptive Prevalence %")
+                         fluidRow(
+                            HTML( paste(h3("Modern Contraceptive Prevalence %"),  uiOutput("info1"), '<br/>')
                             ),
-                            column(5,
-                                   uiOutput("info1"),
-                            )
-                          ),
-                          fluidRow(
                             column(4,
                                    plotOutput("mod_con", width = "60%", height = "200px")
                             ),
@@ -106,14 +128,8 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             )
                           ),
                           fluidRow(
-                            column(5, 
-                                   titlePanel("Traditional Method Use")
+                            HTML( paste(h3("Traditional Method Use"),  uiOutput("info2"), '<br/>')
                             ),
-                            column(7,
-                                   uiOutput("info2"),
-                            )
-                          ),
-                          fluidRow(
                             column(6,
                                    plotOutput("trad_unmarr", height = "300px")
                             ),
@@ -122,18 +138,24 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             )
                           ),
                           fluidRow(
-                            titlePanel("More Information"),
+                            HTML( paste(h5("More Info"), '<br/>')
+                            ),
                             column(12,
                                    tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
                                    tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
                                    tags$h2(""), "The code used to create this App can be found on our",
                                    tags$a(href = "https://github.com/mabellezhang/AYData.git", "GitHub Account")
-                            ),
-                            
+                            ),  
                           )
                      ),
                 #builds Tab for Compare Page
                  tabPanel("Compare",
+                          HTML(
+                            paste(
+                              h1("Compare"),
+                              h3("Select Up to 4 Countries to Compare its Adolescent and Youth Data"), '<br/>', '<br/>'
+                            )
+                          ),
                           fluidRow(
                             column(6,
                                    wellPanel(
@@ -146,19 +168,49 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             ),
                             column(6,
                             )),
+                          fluidRow(
+                            HTML(paste(h5("More Info"), '<br/>')
+                            ),
+                            column(12,
+                                   tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
+                                   tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
+                                   tags$h2(""), "The code used to create this App can be found on our",
+                                   tags$a(href = "https://github.com/mabellezhang/AYData.git", "GitHub Account")
+                            ),  
+                          )
                           
                  ),
                 #builds Tab for Analyze Page
-                 tabPanel("Analyze")
+                 tabPanel("Analyze",
+                          HTML(
+                            paste(
+                              h1("Analzye"),
+                              h3("Info"), '<br/>', '<br/>'
+                            )
+                          ),
+                          fluidRow(
+                            HTML(paste(h5("More Info"), '<br/>')
+                            ),
+                            column(12,
+                                   tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
+                                   tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
+                                   tags$h2(""), "The code used to create this App can be found on our",
+                                   tags$a(href = "https://github.com/mabellezhang/AYData.git", "GitHub Account")
+                            ),  
+                          )
+                  )
         )
 
 # Draw Bargraphs and Figures
 server <- function(input, output) {
   
+
+output$instructions <- renderText("Some text")
+
 #Information Buttons 
   output$info1 <- renderUI({
     tags$span(
-      popify(bsButton("info1", "?", style = "primary", size = "extra-small"), 
+      popify(bsButton("info1", "?", size = "extra-small"), 
              "Definition",
              "Percentage of women using a modern contraceptive method, disaggregated by current marriage status, sexual activity, and age."),
     )
@@ -166,7 +218,7 @@ server <- function(input, output) {
   
   output$info2 <- renderUI({
     tags$span(
-      popify(bsButton("info2", "?", style = "primary", size = "extra-small"), 
+      popify(bsButton("info2", "?", size = "extra-small"), 
              "Definition",
              "Percentage of women using a traditional contraceptive method, disaggregated by current marriage status, sexual activity, and age."),
     )
@@ -174,7 +226,7 @@ server <- function(input, output) {
   
   output$infoNever <- renderUI({
     tags$span(
-      popify(bsButton("infoNever", "?", style = "primary", size = "extra-small"), 
+      popify(bsButton("infoNever", "?", size = "extra-small"), 
              "Definition",
              "Percentage of women who never had intercourse"),
     )
@@ -182,7 +234,7 @@ server <- function(input, output) {
   
   output$infoRecent <- renderUI({
     tags$span(
-      popify(bsButton("infoRecent", "?", style = "primary", size = "extra-small"), 
+      popify(bsButton("infoRecent", "?", size = "extra-small"), 
              "Definition",
              "Percentage of women who were sexually activity in the four weeks preceding the survey"),
     )
@@ -190,7 +242,7 @@ server <- function(input, output) {
   
   output$infoCondom <- renderUI({
     tags$span(
-      popify(bsButton("infoCondom", "?", style = "primary", size = "extra-small"), 
+      popify(bsButton("infoCondom", "?", size = "extra-small"), 
              "Definition",
              "Percentage of young women age 15-24 who reported using a condom at last sexual intercourse, of all young women who had sex with more than one partner in the 12 months preceding the survey"),
     )
@@ -342,7 +394,7 @@ server <- function(input, output) {
         timeline_plot<- timeline_plot + 
             theme_classic() + 
             labs(col="Events") + 
-            scale_color_manual(values = cbp1)
+            scale_color_manual(values = cbp1) + xlim(15, 25)
         
         timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "black", size=1)
       
