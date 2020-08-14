@@ -30,13 +30,17 @@ ayfp <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 aypopdata.long$Round_Count <- round(aypopdata.long$Count, -5)
 aypopdata$Round_Count_WRA <- round(aypopdata$`Women of Reproductive Age (15-49)`, -5)
 
+res <- aypopdata.long %>% filter(aypopdata.long$Country == "India")
+
+
 #FP2020 Colors
 cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4fb3ff", "#00158a")
 
 
 # Define UI for application 
 ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
-                 tabPanel("Profile",
+                #builds Tab for Profile Page
+                  tabPanel("Profile",
                           fluidRow(
                             column(6,
                                    wellPanel(
@@ -128,6 +132,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             
                           )
                      ),
+                #builds Tab for Compare Page
                  tabPanel("Compare",
                           fluidRow(
                             column(6,
@@ -143,12 +148,14 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             )),
                           
                  ),
+                #builds Tab for Analyze Page
                  tabPanel("Analyze")
         )
 
 # Draw Bargraphs and Figures
 server <- function(input, output) {
   
+#Information Buttons 
   output$info1 <- renderUI({
     tags$span(
       popify(bsButton("info1", "?", style = "primary", size = "extra-small"), 
@@ -188,11 +195,14 @@ server <- function(input, output) {
              "Percentage of young women age 15-24 who reported using a condom at last sexual intercourse, of all young women who had sex with more than one partner in the 12 months preceding the survey"),
     )
   })
-   
-   #NEW PLOT: Population by Age Groups
+#Code for Information Buttons End
+ 
+#Start Code for Graphs  
+#New Plot: Population by Age Groups
     ay_res <- reactive({
         res <- aypopdata.long %>% filter(aypopdata.long$Country == input$country)
         req(nrow(res) > 0)
+        res$Age_Group <- factor(c("Young Adolescents (10-14)", "Older Adolescents (15-19)", "Older Youth (20-24)"), levels = c("Older Youth (20-24)", "Older Adolescents (15-19)","Young Adolescents (10-14)"))
         res
     })
     
@@ -210,9 +220,9 @@ server <- function(input, output) {
                                                                                         legend.position = "right")
       
     })
-    #END PLOT
+#End Plot
     
-    #NEW PLOT: Women of Reproductive Age
+#New Plot: Women of Reproductive Age
     small_ay_res <- reactive({
         res1 <- aypopdata %>% filter(aypopdata$Country == input$country)
         req(nrow(res1) > 0)
