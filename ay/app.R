@@ -255,14 +255,13 @@ output$instructions <- renderText("Some text")
     ay_res <- reactive({
         res <- aypopdata.long %>% filter(aypopdata.long$Country == input$country)
         req(nrow(res) > 0)
-        res$Age_Group <- factor(c("Young Adolescents (10-14)", "Older Adolescents (15-19)", "Older Youth (20-24)"), levels = c("Older Youth (20-24)", "Older Adolescents (15-19)","Young Adolescents (10-14)"))
         res
     })
     
     output$graph <- renderPlot({
       bar_one <- (ggplot(ay_res(), aes(Country, Count, fill = Age_Group)) + geom_bar(stat = "identity") + 
                   geom_text(aes(label=`Round_Count`), color="black", size=3.5, position = position_stack(vjust = 0.5)))
-      bar_one + theme_classic() + coord_flip() + labs(subtitle = "Adolescents and Youth") + scale_fill_manual(values = cbp1) + theme(axis.line.y=element_blank(),
+      bar_one + theme_classic() + coord_flip() + labs(subtitle = "Adolescents and Youth") + scale_fill_manual(values = cbp1, labels = c("Young Adolescents (10-14)", "Older Adolescents (15-19)","Older Youth (20-24)")) + theme(axis.line.y=element_blank(),
                                                                                         axis.text.y=element_blank(),
                                                                                         axis.title.y=element_blank(),
                                                                                         axis.title.x = element_blank(),
