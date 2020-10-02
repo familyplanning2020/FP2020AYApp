@@ -335,7 +335,7 @@ output$instructions <- renderText("Some text")
         fig <- (ggplot(ayfp_sex_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
         fig + coord_flip() + theme_classic() + 
             geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-            scale_fill_manual(values = cbp1) + 
+            scale_fill_manual(values = cbp1, name = "Age Group") + 
             labs(title = "Sexually Active %") + theme(axis.line.y=element_blank(),
                                                     axis.text.y=element_blank(),
                                                     axis.title.x=element_blank(),
@@ -364,7 +364,7 @@ output$instructions <- renderText("Some text")
       fig <- (ggplot(ayfp_never_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
                                                                                                           
       fig + coord_flip() + theme_classic() + 
-        geom_text(aes(label=`Percent`), color="black", size=3.5) + scale_fill_manual(values = cbp1) + 
+        geom_text(aes(label=`Percent`), color="black", size=3.5) + scale_fill_manual(values = cbp1, name = "Age Group") + 
         labs(title= "Never Had Sex %") + theme(axis.line.y=element_blank(),
                                                axis.text.y=element_blank(),
                                                axis.title.x=element_blank(),
@@ -434,7 +434,7 @@ output$instructions <- renderText("Some text")
 
       fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
         labs( subtitle = "Unmarried Sexually Active %") + 
-        scale_fill_manual(values = cbp1) + 
+        scale_fill_manual(values = cbp1, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
                                                axis.text.y=element_blank(),
                                                axis.title.x=element_blank(),
@@ -468,7 +468,7 @@ output$instructions <- renderText("Some text")
       
       fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
         labs(subtitle = "Married Women %") +
-        scale_fill_manual(values = cbp1) + 
+        scale_fill_manual(values = cbp1, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
               axis.title.x=element_blank(),
@@ -497,7 +497,7 @@ output$instructions <- renderText("Some text")
       
       fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
         labs(subtitle = "Condom Use During Last Sex %") +
-        scale_fill_manual(values = cbp1) + 
+        scale_fill_manual(values = cbp1, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
               axis.title.x=element_blank(),
@@ -527,7 +527,7 @@ output$instructions <- renderText("Some text")
       
       fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
         labs(subtitle = "Unmarried Sexually Active %") +
-        scale_fill_manual(values = cbp1) + 
+        scale_fill_manual(values = cbp1, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
               axis.title.x=element_blank(),
@@ -556,7 +556,7 @@ output$instructions <- renderText("Some text")
       
       fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
         labs(subtitle = "Married Sexually Active %") +
-        scale_fill_manual(values = cbp1) + 
+        scale_fill_manual(values = cbp1, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
               axis.title.x=element_blank(),
