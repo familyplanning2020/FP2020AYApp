@@ -393,7 +393,7 @@ output$instructions <- renderText("Some text")
         timeline_plot<- ggplot(kle_age_res(), aes(x=Age, y=0, col=Event, label=Event))
         timeline_plot<- timeline_plot + 
             theme_classic() + 
-            labs(col="Events") + 
+            labs(col="Key Life Events") + 
             scale_color_manual(values = cbp1) + xlim(15, 25)
         
         timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "black", size=1)
@@ -408,7 +408,7 @@ output$instructions <- renderText("Some text")
                                               axis.text.x =element_blank(),
                                               axis.ticks.x =element_blank(),
                                               axis.line.x =element_blank(),
-                                              legend.position = "bottom"
+                                              legend.position = "right"
         )
         timeline_plot <- timeline_plot +  
           geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5, color = "black") + 
