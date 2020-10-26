@@ -348,7 +348,7 @@ output$instructions <- renderText("Some text")
     output$sex_activity_graph <- renderPlot({
         fig <- (ggplot(ayfp_sex_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
         fig + coord_flip() + theme_classic() + 
-            geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+            geom_text(aes(label=`Percent`), color="black", size=3.5, position = position_stack(vjust = 0.5)) + 
             scale_fill_manual(values = cbp1, name = "Age Group") + 
             labs(title = "Sexually Active %") + theme(axis.line.y=element_blank(),
                                                     axis.text.y=element_blank(),
@@ -378,7 +378,7 @@ output$instructions <- renderText("Some text")
       fig <- (ggplot(ayfp_never_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
                                                                                                           
       fig + coord_flip() + theme_classic() + 
-        geom_text(aes(label=`Percent`), color="black", size=3.5) + scale_fill_manual(values = cbp1, name = "Age Group") + 
+        geom_text(aes(label=`Percent`), color="black", size=3.5, position = position_stack(vjust = 0.5)) + scale_fill_manual(values = cbp1, name = "Age Group") + 
         labs(title= "Never Had Sex %") + theme(axis.line.y=element_blank(),
                                                axis.text.y=element_blank(),
                                                axis.title.x=element_blank(),
@@ -407,7 +407,7 @@ output$instructions <- renderText("Some text")
         timeline_plot<- ggplot(kle_age_res(), aes(x=Age, y=0, col=Event, label=Event))
         timeline_plot<- timeline_plot + 
             theme_classic() + 
-            labs(col="Events") + 
+            labs(col="Key Life Events") + 
             scale_color_manual(values = cbp1) + xlim(15, 25)
         
         timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "black", size=1)
@@ -422,7 +422,7 @@ output$instructions <- renderText("Some text")
                                               axis.text.x =element_blank(),
                                               axis.ticks.x =element_blank(),
                                               axis.line.x =element_blank(),
-                                              legend.position = "bottom"
+                                              legend.position = "right"
         )
         timeline_plot <- timeline_plot +  
           geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5, color = "black") + 
@@ -446,7 +446,7 @@ output$instructions <- renderText("Some text")
     output$mod_con <- renderPlot({
       fig <- (ggplot(ayfp_mod_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
 
-      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5, position = position_stack(vjust = 0.5)) + 
         labs( subtitle = "Unmarried Sexually Active %") + 
         scale_fill_manual(values = cbp1, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
@@ -480,7 +480,7 @@ output$instructions <- renderText("Some text")
     output$mod_marr <- renderPlot({
       fig <- (ggplot(ayfp_mod_marr(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
       
-      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5, position = position_stack(vjust = 0.5)) + 
         labs(subtitle = "Married Women %") +
         scale_fill_manual(values = cbp1, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
@@ -509,7 +509,7 @@ output$instructions <- renderText("Some text")
     output$con_use <- renderPlot({
       fig <- (ggplot(ayfp_con_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
       
-      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5, position = position_stack(vjust = 0.5)) + 
         labs(subtitle = "Condom Use During Last Sex %") +
         scale_fill_manual(values = cbp1, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
@@ -539,7 +539,7 @@ output$instructions <- renderText("Some text")
     output$trad_unmarr <- renderPlot({
       fig <- (ggplot(ayfp_trad_unmarr(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
       
-      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5, position = position_stack(vjust = 0.5)) + 
         labs(subtitle = "Unmarried Sexually Active %") +
         scale_fill_manual(values = cbp1, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
@@ -568,7 +568,7 @@ output$instructions <- renderText("Some text")
     output$trad_marr <- renderPlot({
       fig <- (ggplot(ayfp_trad_marr(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
       
-      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+      fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5, position = position_stack(vjust = 0.5)) + 
         labs(subtitle = "Married Sexually Active %") +
         scale_fill_manual(values = cbp1, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
