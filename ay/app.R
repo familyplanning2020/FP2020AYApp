@@ -20,14 +20,28 @@ library(shinyBS)
 
 
 #Pulling in data from excel
-aypopdata <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYPOP")
-aypopdata.long <- aypopdata %>% gather(Age_Group,Count,`Young Adolescents (10-14)`,`Older Adolescents (15-19)`,`Older Youth (20-24)`)
-kle_age <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
-kle_marriage <- read_excel("Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
-ayfp <- read_excel("Data/CleanedAYData.xlsx", sheet = "AYFPUse")
+aypopdata <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYPOP")
+aypopdata$sum_10_24 =rowSums(aypopdata[,3:5])
+aypopdata$prop10_14 =round((aypopdata$`Young Adolescents (10-14)`/aypopdata$sum_10_24)*100,1)
+aypopdata$prop15_19 =round((aypopdata$`Older Adolescents (15-19)`/aypopdata$sum_10_24)*100,1)
+aypopdata$prop20_24 =round((aypopdata$`Older Youth (20-24)`/aypopdata$sum_10_24)*100,1)
+aypopdata$round_sum_10_24=round(aypopdata$sum_10_24,-4)
+aypopdata$round_sum_10_14=round(aypopdata$`Young Adolescents (10-14)`,-4)
+aypopdata$round_sum_15_19=round(aypopdata$`Older Adolescents (15-19)`,-4)
+aypopdata$round_sum_20_24=round(aypopdata$`Older Youth (20-24)`,-4)
+
+aypopdata.prop <- aypopdata %>% gather(Age_Group,Count,prop10_14, prop15_19, prop20_24)
+aypopdata.sum <- aypopdata %>% gather(Age_Group,Round_Total,round_sum_10_14, round_sum_15_19, round_sum_20_24)
+aypopdata.sum=aypopdata.sum[, 13]
+aypopdata.long <- cbind(aypopdata.prop, aypopdata.sum)
+
+#aypopdata.long <- aypopdata %>% gather(Age_Group,Count,`Young Adolescents (10-14)`,`Older Adolescents (15-19)`,`Older Youth (20-24)`)
+kle_age <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
+kle_marriage <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
+ayfp <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 
 # Round the counts of AY popualtion & WRA Population  ==> SHIZA DID THIS <== 
-aypopdata.long$Round_Count <- round(aypopdata.long$Count, -5)
+# aypopdata.long$Round_Count <- round(aypopdata.long$Count, -5)
 aypopdata$Round_Count_WRA <- round(aypopdata$`Women of Reproductive Age (15-49)`, -5)
 
 res <- aypopdata.long %>% filter(aypopdata.long$Country == "India")
@@ -145,7 +159,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                                    tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
                                    tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
                                    tags$h2(""), "The code used to create this App can be found on our",
-                                   tags$a(href = "https://github.com/mabellezhang/AYData.git", "GitHub Account")
+                                   tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
                             ),  
                           )
                      ),
@@ -176,7 +190,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                                    tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
                                    tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
                                    tags$h2(""), "The code used to create this App can be found on our",
-                                   tags$a(href = "https://github.com/mabellezhang/AYData.git", "GitHub Account")
+                                   tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
                             ),  
                           )
                           
@@ -196,7 +210,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                                    tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
                                    tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
                                    tags$h2(""), "The code used to create this App can be found on our",
-                                   tags$a(href = "https://github.com/mabellezhang/AYData.git", "GitHub Account")
+                                   tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
                             ),  
                           )
                   )
@@ -260,8 +274,8 @@ output$instructions <- renderText("Some text")
     
     output$graph <- renderPlot({
       bar_one <- (ggplot(ay_res(), aes(Country, Count, fill = Age_Group)) + geom_bar(stat = "identity") + 
-                  geom_text(aes(label=`Round_Count`), color="black", size=3.5, position = position_stack(vjust = 0.5)))
-      bar_one + theme_classic() + coord_flip() + labs(subtitle = "Adolescents and Youth") + scale_fill_manual(values = cbp1, labels = c("Young Adolescents (10-14)", "Older Adolescents (15-19)","Older Youth (20-24)"), name = "Age Group") + theme(axis.line.y=element_blank(),
+                  geom_text(aes(label=Count), color="black", size=3.5, position = position_stack(vjust = 0.5)))
+      bar_one + theme_classic() + coord_flip()  +labs(subtitle = "Adolescents and Youth") + scale_fill_manual(values = cbp1, labels = c("Young Adolescents (10-14)", "Older Adolescents (15-19)","Older Youth (20-24)"), name = "Age Group") + theme(axis.line.y=element_blank(),
                                                                                         axis.text.y=element_blank(),
                                                                                         axis.title.y=element_blank(),
                                                                                         axis.title.x = element_blank(),
@@ -269,7 +283,7 @@ output$instructions <- renderText("Some text")
                                                                                         axis.text.x =element_blank(),
                                                                                         axis.ticks.x =element_blank(),
                                                                                         axis.line.x =element_blank(),
-                                                                                        legend.position = "right")
+                                                                                        legend.position = "bottom")
       
     })
 #End Plot
