@@ -125,7 +125,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                           fluidRow(
                             HTML(
                               paste(
-                                h3("Sexual Activity %"), '<br/>'
+                                h3("Prevalence of Sexual Activity in the last Month"), '<br/>'
                               )
                             ),
                             
@@ -137,7 +137,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             ),
                           ),
                           fluidRow(
-                            HTML( paste(h3("Modern Contraceptive Prevalence %"),  uiOutput("info1"), '<br/>')
+                            HTML( paste(h3("Modern Contraceptive Method Prevalence"),  uiOutput("info1"), '<br/>')
                             ),
                             column(4,
                                    plotOutput("mod_con", width = "60%", height = "200px")
@@ -150,7 +150,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             )
                           ),
                           fluidRow(
-                            HTML( paste(h3("Traditional Method Use"),  uiOutput("info2"), '<br/>')
+                            HTML( paste(h3("Traditional Contraceptive Method Prevalence"),  uiOutput("info2"), '<br/>')
                             ),
                             column(6,
                                    plotOutput("trad_unmarr", height = "300px")
@@ -370,7 +370,7 @@ server <- function(input, output) {
     fig + coord_flip() + theme_classic() + 
       geom_text(aes(label=`Percent`), color="black", size=3.5) + 
       scale_fill_manual(values = cbp1, name = "Age Group") + 
-      labs(title = "Sexually Active %") + theme(axis.line.y=element_blank(),
+      labs(title = "Sexual Activity %") + theme(axis.line.y=element_blank(),
                                                 axis.text.y=element_blank(),
                                                 axis.title.x=element_blank(),
                                                 axis.title.y=element_blank(),
