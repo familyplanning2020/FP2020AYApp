@@ -71,8 +71,8 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                               h4("The Profile Page ..."),'<br/>',
                               h4("The Compare Page ..."),'<br/>',
                               h4("The Analyze Page ..."),'<br/>',
-                              img(src = "FP2020_RGB.jpeg", align = "right")
-                            )
+                              h4("Contact us - info@familyplanning2020.org"),'<br/>',
+                              img(src = "FP2020_RGB_NEW.png", align = "right", height = '100px', width = '100px')                            )
                           )     
                  ),
                  tabPanel("Profile",
