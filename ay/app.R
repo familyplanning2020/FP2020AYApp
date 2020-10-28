@@ -95,7 +95,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                           fluidRow( 
                             HTML(
                               paste(
-                                h3("Adolescent & Youth Population"), uiOutput("info0") '<br/>'
+                                h3("Adolescent & Youth Population"), uiOutput("info0"), '<br/>'
                               )
                             ),
                             column(8,
@@ -231,6 +231,14 @@ server <- function(input, output) {
   output$instructions <- renderText("Some text")
   
   #Information Buttons 
+  output$info0 <- renderUI({
+    tags$span(
+      popify(bsButton("info0", "Interpretation", size = "extra-small"), 
+             "Definition",
+             "Percentage of 10-14, 15-19, and 20-24 out of all young people."),
+    )
+  })
+  
   output$info1 <- renderUI({
     tags$span(
       popify(bsButton("info1", "?", size = "extra-small"), 
