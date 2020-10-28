@@ -95,7 +95,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                           fluidRow( 
                             HTML(
                               paste(
-                                h3("Adolescent & Youth Population"), '<br/>'
+                                h3("Adolescent & Youth Population"), uiOutput("info0") '<br/>'
                               )
                             ),
                             column(8,
@@ -219,6 +219,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                                    tags$h2(""), "The code used to create this App can be found on our",
                                    tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
                             ),  
+
                           )
                  )
 )
@@ -297,6 +298,7 @@ server <- function(input, output) {
     
   })
   #End Plot
+  
   
   #New Plot: Women of Reproductive Age
   small_ay_res <- reactive({
@@ -437,8 +439,8 @@ server <- function(input, output) {
     )
     timeline_plot <- timeline_plot +  
       geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5, color = "black",check_overlap = TRUE) + 
-      geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) +
-      ggtitle("Median Age at First Marriage, Sex and Birth")
+      geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) 
+      #ggtitle("Median Age at First Marriage, Sex and Birth")
     timeline_plot
   })
   
