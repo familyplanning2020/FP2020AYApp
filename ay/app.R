@@ -46,6 +46,7 @@ kle_marriage$`% of 20-24 year olds married before 18`=round(kle_marriage$`% of 2
 kle_marriage$`% of 25-29 year olds married before 18`=round(kle_marriage$`% of 25-29 year olds married before 18`*100,1)
 
 ayfp <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYFPUse")
+ayfp$`MCPR for married adolescent and youth (15-24)`= round(ayfp$`MCPR for married adolescent and youth (15-24)`, 1)
 
 # Round the counts of AY popualtion & WRA Population  ==> SHIZA DID THIS <== 
 # aypopdata.long$Round_Count <- round(aypopdata.long$Count, -5)
@@ -66,7 +67,9 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                             paste(
                               h1("General Info"),'<br/>',
                               h3("What is this?"),'<br/>',
-                              h4("This is an App by FP2020. info info info"),'<br/>',
+                              h4("This is an interactive data app created by Family Planning 2020 (FP2020). FP2020 is a global partnership to empower women and girls by investing in rights-based family planning. The platform FP2020 has built is resilient, inclusive, and effective. Most importantly, countries are in the driver’s seat. FP2020 is in the process of transitioning to the next phase of the partnership, to learn more visit www.familyplanning2020.org/Beyond2020 "),'<br/>',
+                              h4 ("This app was created to make adolescent and youth data more accessible. You will be able to view, analysis, and compare the 2018-2019 FP2020 Annual Progress Report data through different graphics and tables."),'<br/>',
+                              h4 ("Over the course of a year, Track20, FP2020 and other partners produce and publish data on the progress of the movement. FP2020's Core Indicator estimates are produced by Track20 and in-country Monitoring & Evaluation (M&E) Officers. This app includes data from Core Indicator 2, modern contraceptive prevalence rate, for women between the ages of 15-24."),'<br/>', 
                               h4("Click on the Tabs above to explore."),'<br/>',
                               h4("The Profile Page ..."),'<br/>',
                               h4("The Compare Page ..."),'<br/>',
@@ -125,7 +128,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                           fluidRow(
                             HTML(
                               paste(
-                                h3("Prevalence of Sexual Activity in the last Month"), '<br/>'
+                                h3("Prevalence of Sexual Activity in the Last Month"), '<br/>'
                               )
                             ),
                             
@@ -350,7 +353,7 @@ server <- function(input, output) {
     
   })
   
-  output$table <- renderTable(kle_mar_res(),hover =TRUE, bordered = TRUE, colnames=FALSE,caption="test", digits = 1)
+  output$table <- renderTable(kle_mar_res(),hover =TRUE, bordered = TRUE, colnames= TRUE)
   
   #NEW PLOT:Recent Sexual Activity 
   ayfp_sex_res <- reactive({
@@ -501,7 +504,7 @@ server <- function(input, output) {
   output$mod_marr <- renderPlot({
     fig <- (ggplot(ayfp_mod_marr(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
     
-    fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+    fig + coord_flip() + theme_classic() + geom_text(aes(label= round(`Percent`,1)), color="black", size=3.5) + 
       labs(subtitle = "Married Women %") +
       scale_fill_manual(values = cbp1, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
