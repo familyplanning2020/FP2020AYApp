@@ -19,9 +19,9 @@ library(factorial2x2)
 library(shinyBS)
 library(DT)
 
-
+setwd("C:/Users/sfarid/Documents/FP2020AYApp/ay/Data")
 #Pulling in data from excel
-aypopdata <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYPOP")
+aypopdata <- read_excel("CleanedAYData.xlsx", sheet = "AYPOP")
 aypopdata$sum_10_24 =rowSums(aypopdata[,3:5])
 aypopdata$prop10_14 =round((aypopdata$`Young Adolescents (10-14)`/aypopdata$sum_10_24)*100,1)
 aypopdata$prop15_19 =round((aypopdata$`Older Adolescents (15-19)`/aypopdata$sum_10_24)*100,1)
@@ -37,15 +37,20 @@ aypopdata.sum=aypopdata.sum[, 13]
 aypopdata.long <- cbind(aypopdata.prop, aypopdata.sum)
 
 
-kle_age <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
-kle_marriage <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
+kle_age <- read_excel("CleanedAYData.xlsx", sheet = "KLEAgeEvents")
+kle_marriage <- read_excel("CleanedAYData.xlsx", sheet = "KLEMarriage")
 kle_marriage$`% of 15-19 year olds who are married`=round(kle_marriage$`% of 15-19 year olds who are married`*100,1)
 kle_marriage$`% of 20-24 year olds who are married`=round(kle_marriage$`% of 20-24 year olds who are married`*100,1)
 kle_marriage$`% of adolescent and youth (15-24) who are married`=round(kle_marriage$`% of adolescent and youth (15-24) who are married`*100,1)
 kle_marriage$`% of 20-24 year olds married before 18`=round(kle_marriage$`% of 20-24 year olds married before 18`*100,1)
 kle_marriage$`% of 25-29 year olds married before 18`=round(kle_marriage$`% of 25-29 year olds married before 18`*100,1)
+data <- subset(kle_marriage, select=c(4))
+colnames(data)[1]=""
+kle_marriage=kle_marriage[, -c(4)]
+kle_marriage$`% of adolescent and youth (15-24) who are married`=data
+colnames(kle_marriage)[6]="% of adolescent and youth (15-24) who are married"
 
-ayfp <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYFPUse")
+ayfp <- read_excel("CleanedAYData.xlsx", sheet = "AYFPUse")
 ayfp$`MCPR for married adolescent and youth (15-24)`= round(ayfp$`MCPR for married adolescent and youth (15-24)`, 1)
 
 # Round the counts of AY popualtion & WRA Population  ==> SHIZA DID THIS <== 
@@ -58,33 +63,39 @@ res <- aypopdata.long %>% filter(aypopdata.long$Country == "India")
 #FP2020 Colors
 cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4fb3ff", "#00158a")
 
+### NEED TO FIGURE OUT WHY IT'S NOT WORKING WITH GITHUB FOLDER ### 
+b64 <- base64enc::dataURI(file="C:/Users/sfarid/Documents/FP2020AYApp/ay/Data/www/FP2020_RGB_NEW.png", mime="image/png")
 
 # Define UI for application 
-ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
+ui <- navbarPage(                  
+  #the line of code places the logo on the left hand side before the tabs start. See image below.
+  title = div(img(src=b64,style="margin-top: -14px; padding-right:10px;padding-bottom:10px", height = 60)),
                  #builds Tab for Profile Page
                  tabPanel("How to Use",
                           HTML(
                             paste(
-                              h1("General Info"),'<br/>',
-                              h3("What is this?"),'<br/>',
-                              h4("This is an interactive data app created by Family Planning 2020 (FP2020). FP2020 is a global partnership to empower women and girls by investing in rights-based family planning. The platform FP2020 has built is resilient, inclusive, and effective. Most importantly, countries are in the driver’s seat. FP2020 is in the process of transitioning to the next phase of the partnership, to learn more visit www.familyplanning2020.org/Beyond2020 "),'<br/>',
-                              h4 ("This app was created to make adolescent and youth data more accessible. You will be able to view, analysis, and compare the 2018-2019 FP2020 Annual Progress Report data through different graphics and tables."),'<br/>',
-                              h4 ("Over the course of a year, Track20, FP2020 and other partners produce and publish data on the progress of the movement. FP2020's Core Indicator estimates are produced by Track20 and in-country Monitoring & Evaluation (M&E) Officers. This app includes data from Core Indicator 2, modern contraceptive prevalence rate, for women between the ages of 15-24."),'<br/>', 
-                              h4("Click on the Tabs above to explore the profile, compare, and analyze features."),'<br/>',
-                              h4("Profile Page"),'<br/>',
-                              h4("The Profile Page  includes individual country data on adolescents and youth population, key life events, prevalence of sexual activity, modern contraceptive method prevalence, and traditional contraceptive method prevalence. The adolescents and youth population graph is segmented by the 10-14, 15-19, and 20-24 age group, of which, 15-19 includes women of reproductive age.The key life events graph plots median age at first marriage, sex, and birth over a line plot and includes a table to demonstrate the difference between percent married and percent married before 18 years old.The prevalence of sexual activity graph determines the percent of sexually active versus percent of those that never had sex between 15-19 and 20-24.The modern contraceptive method prevalence tab displays bar graphs for the percent of women that are unmarried and sexually active,  the percent of women that are married, and  the percent of women that used condoums during last sex.The traditional contraceptive method prevalence tab displays bar graphs for the percent of women that are unmarried and sexually active and the percent of women that are married using traditional methods."),'<br/>',
-                              h4("Compare Page"),'<br/>',
-                              h4("The Compare Page provides the opportunity to see similar data from the profile page with multiple countries to compare the percentages.The first section shows the comparison for the selected indicators.The adolescents and youth population graph shows the comparison of the adolescent and youth population between 10-14, 15-19, and 20-24 age group. The key life events graph shows the comparison of median age at first marriage, sex, and birth over a line plot and includes a table to demonstrate the difference between percent married and percent married before 18 years old. The prevalence of sexual activity table shows the comparison of the percent of sexually active versus percent of those that never had sex between 15-19 and 20-24. The modern contraceptive prevalence rate table shows the comparison of the MCPR between unmarried sexually active populations and married populations. The traditional method use table shows the country comparison of the percent of women that are unmarried and sexually active and the percent of women that are married using traditional methods."),'<br/>',
-                              h4("Analyze Page"),'<br/>',
-                              h4("Contact us at info@familyplanning2020.org"),'<br/>',
-                              img(src = "FP2020_RGB_NEW.png", align = "right", height = '100px', width = '100px')                            )
+                              h2("Adolescent and Youth Data App"),'<br/>',
+                              h4("What is this?"),'<br/>',
+                              h5("This is an interactive data app created by Family Planning 2020 (FP2020). FP2020 is a global partnership to empower women and girls 
+                                 by investing in rights-based family planning. This app was created to make adolescent and youth data more accessible. You will be able
+                                 to view, compare, and analyzw the adolescent and youth data that was released with the 2018-2019 FP2020 Annual Progress Report 
+                                 through different graphics and tables."),'<br/>', 
+                              h4("Profile, Compare, and Analyze Pages"),'<br/>',
+                              h5("The Profile Page includes individual country data on adolescents and youth population, key life events, prevalence of sexual activity, 
+                              modern contraceptive method prevalence, and traditional contraceptive method prevalence. The Compare Page provides the opportunity to view
+                              data from the profile page for multiple countries. The Analyze Page allows you to further analyze this data."),'<br/>',
+                              h4("Have Questions? Contact us at info@familyplanning2020.org"),'<br/>'),
+                              #tags$img(src = b64, align = "right", height = '100px', width = '100px')), 
                           )     
+                          
                  ),
+  
                  tabPanel("Profile",
                           HTML(
                             paste(
                               h1("Profile"),
                               h3("Select a Country to Learn about its Adolescent and Youth Data"), '<br/>', '<br/>'
+                              
                             )
                           ),
                           fluidRow(
@@ -118,7 +129,7 @@ ui <- navbarPage(title = "Adolescent & Youth Population Data Applet",
                           ),
                           
                           fluidRow(
-                            HTML( paste(h3("Key Life Events"), '<br/>')
+                            HTML( paste(h3("Key Life Events"),uiOutput("info0a"), '<br/>')
                             ),
                             column(8,
                                    plotOutput("linegraph", width = "75%", height = "200px")
@@ -238,15 +249,23 @@ server <- function(input, output) {
   #Information Buttons 
   output$info0 <- renderUI({
     tags$span(
-      popify(bsButton("info0", "Interpretation", size = "extra-small"), 
+      popify(bsButton("info0", "What is this?", size = "extra-small"), 
              "Definition",
-             "Percentage of 10-14, 15-19, and 20-24 out of all young people."),
+             "Total and Percentage of 10-14, 15-19, and 20-24 out of all young people (10-24)."),
+    )
+  })
+
+  output$info0a <- renderUI({
+    tags$span(
+      popify(bsButton("info0a", "What is this?", size = "extra-small"), 
+             "Definition",
+             "Order of key life events that indicate when most adolescents and young people first marry, engage in sex, give birth."),
     )
   })
   
   output$info1 <- renderUI({
     tags$span(
-      popify(bsButton("info1", "?", size = "extra-small"), 
+      popify(bsButton("info1", "What is this?", size = "extra-small"), 
              "Definition",
              "Percentage of women using a modern contraceptive method, disaggregated by current marriage status, sexual activity, and age."),
     )
@@ -254,7 +273,7 @@ server <- function(input, output) {
   
   output$info2 <- renderUI({
     tags$span(
-      popify(bsButton("info2", "?", size = "extra-small"), 
+      popify(bsButton("info2", "What is this?", size = "extra-small"), 
              "Definition",
              "Percentage of women using a traditional contraceptive method, disaggregated by current marriage status, sexual activity, and age."),
     )
@@ -262,7 +281,7 @@ server <- function(input, output) {
   
   output$infoNever <- renderUI({
     tags$span(
-      popify(bsButton("infoNever", "?", size = "extra-small"), 
+      popify(bsButton("infoNever", "What is this?", size = "extra-small"), 
              "Definition",
              "Percentage of women who never had intercourse"),
     )
@@ -270,7 +289,7 @@ server <- function(input, output) {
   
   output$infoRecent <- renderUI({
     tags$span(
-      popify(bsButton("infoRecent", "?", size = "extra-small"), 
+      popify(bsButton("infoRecent", "What is this?", size = "extra-small"), 
              "Definition",
              "Percentage of women who were sexually activity in the four weeks preceding the survey"),
     )
@@ -278,7 +297,7 @@ server <- function(input, output) {
   
   output$infoCondom <- renderUI({
     tags$span(
-      popify(bsButton("infoCondom", "?", size = "extra-small"), 
+      popify(bsButton("infoCondom", "What is this?", size = "extra-small"), 
              "Definition",
              "Percentage of young women age 15-24 who reported using a condom at last sexual intercourse, of all young women who had sex with more than one partner in the 12 months preceding the survey"),
     )
@@ -342,20 +361,21 @@ server <- function(input, output) {
   
   
   #NEW PLOT: Table
-  #TO BE COMPLETED
   kle_mar_res <- reactive({
     res3 <- kle_marriage %>% filter(kle_marriage$Country == input$country)
     req(nrow(res3) > 0)
-    table1 <- matrix(c(res3[[1,2]], NA, res3[[1,3]], res3[[1,5]], res3[[1,4]], NA, NA, res3[[1,6]]), ncol = 2, byrow = TRUE)
+    table1 <- matrix(c(res3[[1,2]], NA, res3[[1,3]], res3[[1,4]], res3[[1,5]], NA, NA, res3[[1,6]]), ncol = 2, byrow = TRUE)
     colnames(table1) <- c("% Married", "% Married before 18 Years Old")
-    rownames(table1) <- c("15-19", "20-24", "15-24", "25-29")
-    table2 <- as.table(table1)
+    rownames(table1) <- c("15-19", "20-24", "25-29","15-24")
+    table2 <- as.matrix(table1)
+    `Age Group`=c("15-19", "20-24", "25-29","15-24")
+    table2=cbind(`Age Group`, table2)
     
     table2
     
   })
   
-  output$table <- renderTable(kle_mar_res(),hover =TRUE, bordered = TRUE, colnames= TRUE)
+  output$table <- renderTable(kle_mar_res(),hover =TRUE, bordered = TRUE, colnames= TRUE,digits = 1)
   
   #NEW PLOT:Recent Sexual Activity 
   ayfp_sex_res <- reactive({
@@ -371,6 +391,9 @@ server <- function(input, output) {
   })
   
   output$sex_activity_graph <- renderPlot({
+    validate(
+      need(nrow(ayfp_sex_res()) > 0, "No data for this selection.")
+    )
     fig <- (ggplot(ayfp_sex_res(), aes(x= `Age.Group`, y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
     fig + coord_flip() + theme_classic() + 
       geom_text(aes(label=`Percent`), color="black", size=3.5) + 
