@@ -19,7 +19,7 @@ library(factorial2x2)
 library(shinyBS)
 library(DT)
 
-setwd("C:/Users/sfarid/Documents/FP2020AYApp/ay/Data")
+setwd("C:/Users/ybai/Documents/GitHub/FP2020AYApp/FP2020AYApp/FP2020AYApp")
 #Pulling in data from excel
 aypopdata <- read_excel("CleanedAYData.xlsx", sheet = "AYPOP")
 aypopdata$sum_10_24 =rowSums(aypopdata[,3:5])
@@ -64,180 +64,180 @@ res <- aypopdata.long %>% filter(aypopdata.long$Country == "India")
 cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4fb3ff", "#00158a")
 
 ### NEED TO FIGURE OUT WHY IT'S NOT WORKING WITH GITHUB FOLDER ### 
-b64 <- base64enc::dataURI(file="C:/Users/sfarid/Documents/FP2020AYApp/ay/Data/www/FP2020_RGB_NEW.png", mime="image/png")
+b64 <- base64enc::dataURI(file="C:/Users/ybai/Documents/GitHub/FP2020AYApp/FP2020AYApp/FP2020AYApp/FP2020_RGB_NEW.png", mime="image/png")
 
 # Define UI for application 
 ui <- navbarPage(                  
   #the line of code places the logo on the left hand side before the tabs start. See image below.
   title = div(img(src=b64,style="margin-top: -14px; padding-right:10px;padding-bottom:10px", height = 60)),
-                 #builds Tab for Profile Page
-                 tabPanel("How to Use",
-                          HTML(
-                            paste(
-                              h2("Adolescent and Youth Data App"),'<br/>',
-                              h4("What is this?"),'<br/>',
-                              h5("This is an interactive data app created by Family Planning 2020 (FP2020). FP2020 is a global partnership to empower women and girls 
+  #builds Tab for Profile Page
+  tabPanel("How to Use",
+           HTML(
+             paste(
+               h2("Adolescent and Youth Data App"),'<br/>',
+               h4("What is this?"),'<br/>',
+               h5("This is an interactive data app created by Family Planning 2020 (FP2020). FP2020 is a global partnership to empower women and girls 
                                  by investing in rights-based family planning. This app was created to make adolescent and youth data more accessible. You will be able
                                  to view, compare, and analyzw the adolescent and youth data that was released with the 2018-2019 FP2020 Annual Progress Report 
                                  through different graphics and tables."),'<br/>', 
-                              h4("Profile, Compare, and Analyze Pages"),'<br/>',
-                              h5("The Profile Page includes individual country data on adolescents and youth population, key life events, prevalence of sexual activity, 
+               h4("Profile, Compare, and Analyze Pages"),'<br/>',
+               h5("The Profile Page includes individual country data on adolescents and youth population, key life events, prevalence of sexual activity, 
                               modern contraceptive method prevalence, and traditional contraceptive method prevalence. The Compare Page provides the opportunity to view
                               data from the profile page for multiple countries. The Analyze Page allows you to further analyze this data."),'<br/>',
-                              h4("Have Questions? Contact us at info@familyplanning2020.org"),'<br/>'),
-                              #tags$img(src = b64, align = "right", height = '100px', width = '100px')), 
-                          )     
-                          
-                 ),
+               h4("Have Questions? Contact us at info@familyplanning2020.org"),'<br/>'),
+             #tags$img(src = b64, align = "right", height = '100px', width = '100px')), 
+           )     
+           
+  ),
   
-                 tabPanel("Profile",
-                          HTML(
-                            paste(
-                              h1("Profile"),
-                              h3("Select a Country to Learn about its Adolescent and Youth Data"), '<br/>', '<br/>'
-                              
-                            )
-                          ),
-                          fluidRow(
-                            column(6,
-                                   wellPanel(
-                                     selectInput("country",
-                                                 "Select Country",
-                                                 choices = as.list(aypopdata.long$Country))
-                                   )
-                            ),
-                            column(6,
-                            )),
-                          fluidRow( 
-                            HTML(
-                              paste(
-                                h3("Adolescent & Youth Population"), uiOutput("info0"), '<br/>'
-                              )
-                            ),
-                            column(8,
-                                   plotOutput("graph", width = "100%", height = "150px")    
-                            ),
-                            column(4,
-                            )
-                          ),
-                          fluidRow(
-                            column(8,
-                                   plotOutput("wide", width = "100%", height = "150px")
-                            ),
-                            column(4,
-                            ),
-                          ),
-                          
-                          fluidRow(
-                            HTML( paste(h3("Key Life Events"),uiOutput("info0a"), '<br/>')
-                            ),
-                            column(8,
-                                   plotOutput("linegraph", width = "75%", height = "200px")
-                            ),
-                            column(4,
-                                   tableOutput("table")
-                            ),
-                          ),
-                          fluidRow(
-                            HTML(
-                              paste(
-                                h3("Prevalence of Sexual Activity in the Last Month"), '<br/>'
-                              )
-                            ),
-                            
-                            column(6, uiOutput("infoRecent"),
-                                   plotOutput("sex_activity_graph", width = "60%", height = "200px")
-                            ),
-                            column(6, uiOutput("infoNever"),
-                                   plotOutput("never_sex_graph", width = "60%", height = "200px")
-                            ),
-                          ),
-                          fluidRow(
-                            HTML( paste(h3("Modern Contraceptive Method Prevalence"),  uiOutput("info1"), '<br/>')
-                            ),
-                            column(4,
-                                   plotOutput("mod_con", width = "60%", height = "200px")
-                            ),
-                            column(4,
-                                   plotOutput("mod_marr",  width = "60%", height = "200px")
-                            ),
-                            column(4, uiOutput("infoCondom"),
-                                   plotOutput("con_use", width = "60%", height = "200px")
-                            )
-                          ),
-                          fluidRow(
-                            HTML( paste(h3("Traditional Contraceptive Method Prevalence"),  uiOutput("info2"), '<br/>')
-                            ),
-                            column(6,
-                                   plotOutput("trad_unmarr", height = "300px")
-                            ),
-                            column(6,
-                                   plotOutput("trad_marr", height = "300px")
-                            )
-                          ),
-                          fluidRow(
-                            HTML( paste(h5("More Info"), '<br/>')
-                            ),
-                            column(12,
-                                   tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
-                                   tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
-                                   tags$h2(""), "The code used to create this App can be found on our",
-                                   tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
-                            ),  
-                          )
-                 ),
-                 #builds Tab for Compare Page
-                 tabPanel("Compare",
-                          HTML(
-                            paste(
-                              h1("Compare"),
-                              h3("Select Up to 4 Countries to Compare its Adolescent and Youth Data"), '<br/>', '<br/>'
-                            )
-                          ),
-                          fluidRow(
-                            column(6,
-                                   wellPanel(
-                                     selectizeInput("country",
-                                                    "Select Up to 4 Countries to Compare",
-                                                    choices = as.list(aypopdata.long$Country),
-                                                    multiple = TRUE,
-                                                    options = list(maxItems = 4))
-                                   )
-                            ),
-                            column(6,
-                            )),
-                          fluidRow(
-                            HTML(paste(h5("More Info"), '<br/>')
-                            ),
-                            column(12,
-                                   tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
-                                   tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
-                                   tags$h2(""), "The code used to create this App can be found on our",
-                                   tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
-                            ),  
-                          )
-                          
-                 ),
-                 #builds Tab for Analyze Page
-                 tabPanel("Analyze",
-                          HTML(
-                            paste(
-                              h1("Analzye"),
-                              h3("Info"), '<br/>', '<br/>'
-                            )
-                          ),
-                          fluidRow(
-                            HTML(paste(h5("More Info"), '<br/>')
-                            ),
-                            column(12,
-                                   tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
-                                   tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
-                                   tags$h2(""), "The code used to create this App can be found on our",
-                                   tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
-                            ),  
-
-                          )
-                 )
+  tabPanel("Profile",
+           HTML(
+             paste(
+               h1("Profile"),
+               h3("Select a Country to Learn about its Adolescent and Youth Data"), '<br/>', '<br/>'
+               
+             )
+           ),
+           fluidRow(
+             column(6,
+                    wellPanel(
+                      selectInput("country",
+                                  "Select Country",
+                                  choices = as.list(aypopdata.long$Country))
+                    )
+             ),
+             column(6,
+             )),
+           fluidRow( 
+             HTML(
+               paste(
+                 h3("Adolescent & Youth Population"), uiOutput("info0"), '<br/>'
+               )
+             ),
+             column(8,
+                    plotOutput("graph", width = "100%", height = "150px")    
+             ),
+             column(4,
+             )
+           ),
+           fluidRow(
+             column(8,
+                    plotOutput("wide", width = "100%", height = "150px")
+             ),
+             column(4,
+             ),
+           ),
+           
+           fluidRow(
+             HTML( paste(h3("Key Life Events"),uiOutput("info0a"), '<br/>')
+             ),
+             column(8,
+                    plotOutput("linegraph", width = "75%", height = "200px")
+             ),
+             column(4,
+                    tableOutput("table")
+             ),
+           ),
+           fluidRow(
+             HTML(
+               paste(
+                 h3("Prevalence of Sexual Activity in the Last Month"), '<br/>'
+               )
+             ),
+             
+             column(6, uiOutput("infoRecent"),
+                    plotOutput("sex_activity_graph", width = "60%", height = "200px")
+             ),
+             column(6, uiOutput("infoNever"),
+                    plotOutput("never_sex_graph", width = "60%", height = "200px")
+             ),
+           ),
+           fluidRow(
+             HTML( paste(h3("Modern Contraceptive Method Prevalence"), '<br/>')
+             ),
+             column(4,uiOutput("infoUnMarr"),
+                    plotOutput("mod_con", width = "60%", height = "200px")
+             ),
+             column(4,uiOutput("infoMarr"),
+                    plotOutput("mod_marr",  width = "60%", height = "200px")
+             ),
+             column(4, uiOutput("infoCondom"),
+                    plotOutput("con_use", width = "60%", height = "200px")
+             )
+           ),
+           fluidRow(
+             HTML( paste(h3("Traditional Contraceptive Method Prevalence"),  uiOutput("info2"), '<br/>')
+             ),
+             column(6,
+                    plotOutput("trad_unmarr", height = "300px")
+             ),
+             column(6,
+                    plotOutput("trad_marr", height = "300px")
+             )
+           ),
+           fluidRow(
+             HTML( paste(h5("More Info"), '<br/>')
+             ),
+             column(12,
+                    tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
+                    tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
+                    tags$h2(""), "The code used to create this App can be found on our",
+                    tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
+             ),  
+           )
+  ),
+  #builds Tab for Compare Page
+  tabPanel("Compare",
+           HTML(
+             paste(
+               h1("Compare"),
+               h3("Select Up to 4 Countries to Compare its Adolescent and Youth Data"), '<br/>', '<br/>'
+             )
+           ),
+           fluidRow(
+             column(6,
+                    wellPanel(
+                      selectizeInput("country",
+                                     "Select Up to 4 Countries to Compare",
+                                     choices = as.list(aypopdata.long$Country),
+                                     multiple = TRUE,
+                                     options = list(maxItems = 4))
+                    )
+             ),
+             column(6,
+             )),
+           fluidRow(
+             HTML(paste(h5("More Info"), '<br/>')
+             ),
+             column(12,
+                    tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
+                    tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
+                    tags$h2(""), "The code used to create this App can be found on our",
+                    tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
+             ),  
+           )
+           
+  ),
+  #builds Tab for Analyze Page
+  tabPanel("Analyze",
+           HTML(
+             paste(
+               h1("Analzye"),
+               h3("Info"), '<br/>', '<br/>'
+             )
+           ),
+           fluidRow(
+             HTML(paste(h5("More Info"), '<br/>')
+             ),
+             column(12,
+                    tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
+                    tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
+                    tags$h2(""), "The code used to create this App can be found on our",
+                    tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
+             ),  
+             
+           )
+  )
 )
 
 # Draw Bargraphs and Figures
@@ -254,20 +254,12 @@ server <- function(input, output) {
              "Total and Percentage of 10-14, 15-19, and 20-24 out of all young people (10-24)."),
     )
   })
-
+  
   output$info0a <- renderUI({
     tags$span(
       popify(bsButton("info0a", "What is this?", size = "extra-small"), 
              "Definition",
              "Order of key life events that indicate when most adolescents and young people first marry, engage in sex, give birth."),
-    )
-  })
-  
-  output$info1 <- renderUI({
-    tags$span(
-      popify(bsButton("info1", "What is this?", size = "extra-small"), 
-             "Definition",
-             "Percentage of women using a modern contraceptive method, disaggregated by current marriage status, sexual activity, and age."),
     )
   })
   
@@ -294,7 +286,20 @@ server <- function(input, output) {
              "Percentage of women who were sexually activity in the four weeks preceding the survey"),
     )
   })
-  
+  output$infoUnMarr <- renderUI({
+    tags$span(
+      popify(bsButton("infoUnMarr", "What is this?", size = "extra-small"), 
+             "Definition",
+             "Percentage of unmarried sexually active women age 15-24 who reported using a modern contraceptive method"),
+    )
+  })
+  output$infoMarr <- renderUI({
+    tags$span(
+      popify(bsButton("infoMarr", "What is this?", size = "extra-small"), 
+             "Definition",
+             "Percentage of married women age 15-24 who reported using a modern contraceptive method"),
+    )
+  })
   output$infoCondom <- renderUI({
     tags$span(
       popify(bsButton("infoCondom", "What is this?", size = "extra-small"), 
@@ -476,7 +481,7 @@ server <- function(input, output) {
     timeline_plot <- timeline_plot +  
       geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5, color = "black",check_overlap = TRUE) + 
       geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) 
-      #ggtitle("Median Age at First Marriage, Sex and Birth")
+    #ggtitle("Median Age at First Marriage, Sex and Birth")
     timeline_plot
   })
   
@@ -634,3 +639,5 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+
+
