@@ -166,12 +166,12 @@ ui <- navbarPage(
              )
            ),
            fluidRow(
-             HTML( paste(h3("Traditional Contraceptive Method Prevalence"),  uiOutput("info2"), '<br/>')
+             HTML( paste(h3("Traditional Contraceptive Method Prevalence"), '<br/>')
              ),
-             column(6,
+             column(6,uiOutput("infoTUnmarr"),
                     plotOutput("trad_unmarr", height = "300px")
              ),
-             column(6,
+             column(6, uiOutput("infoTMarr"),
                     plotOutput("trad_marr", height = "300px")
              )
            ),
@@ -263,11 +263,18 @@ server <- function(input, output) {
     )
   })
   
-  output$info2 <- renderUI({
+  output$infoTUnMarr <- renderUI({
     tags$span(
-      popify(bsButton("info2", "What is this?", size = "extra-small"), 
+      popify(bsButton("infoTUnMarr", "What is this?", size = "extra-small"), 
              "Definition",
-             "Percentage of women using a traditional contraceptive method, disaggregated by current marriage status, sexual activity, and age."),
+             "Percentage of unmarried sexually active women using a traditional contraceptive method."),
+    )
+  })
+  output$infoTMarr <- renderUI({
+    tags$span(
+      popify(bsButton("infoTMarr", "What is this?", size = "extra-small"), 
+             "Definition",
+             "Percentage of married women using a traditional contraceptive method."),
     )
   })
   
@@ -278,7 +285,6 @@ server <- function(input, output) {
              "Percentage of women who never had intercourse"),
     )
   })
-  
   output$infoRecent <- renderUI({
     tags$span(
       popify(bsButton("infoRecent", "What is this?", size = "extra-small"), 
@@ -423,7 +429,7 @@ server <- function(input, output) {
     ayfp_never_res
     res5$"15-19" <- res5$"Never have had sex older adolescents aged 15-19"
     res5$"20-24" <- res5$"Never have had sex older youth aged 20-24"
-    res5.long <- res5 %>% gather("Age.Group", "Percent", "15-19" , "20-24")
+    res5.long <- res5 %>% gather("Age.Group", "Percent", "15-19", "20-24")
     res5.long
   })
   
