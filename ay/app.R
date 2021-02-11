@@ -59,13 +59,24 @@ aypopdata$Round_Count_WRA <- round(aypopdata$`Women of Reproductive Age (15-49)`
 res <- aypopdata.long %>% filter(aypopdata.long$Country == "India")
 
 
-#FP2020 Colors
+#FP2030 Color Palette - Graphs 
+#AY Population Graph = cbp1 
+#Key Life Events Graph = cbp2
+#Prevalence of sexual activity in the last month (Sexual activity and never had sex) = cbp3
+#Modern Contraceptive Method Prevalence (Unmarried) = cbp3 
+#Modern Contraceptive Method Prevalence (Married) = cbp5
+#Modern Contraceptive Method Prevalence (Condom use) = cbp4
+#Traditional Contraceptive Method Prevalance (Unmarried) = cbp3
+#Traditional Contraceptive Method Prevalence (Married) = chp5
+
+#FP2030 Color Hex Codes
 #cbp1 <- c("#bdd1ff", "#82d816", "#73d8bf", "#248c85", "#f7bc1b", "#ff7314", "#4fb3ff", "#00158a")
-cbp2 <- c("#1bce9b",  "#2e4ab5", "#242071", "#ffb636", "#ff7140", " #f2f0ff")
+cbp2 <- c("#21b1fe",  "#1bce9b", "#1a7158", "#ffb636", "#ff7140", " #f2f0ff")
 #cbp2 <- c("#bdd1ff", "#73d8bf", "#2a977c")
 cbp1 <- c("#ffb636", "#ff7140", "#89427b")
-cbp3 <- c( "#73d8bf", "#2a977c", "#4fb3ff")
+cbp3 <- c( "#1bce9b", "#1a7158")
 cbp4<- c("#f8b6a5")
+cbp5 <- c("#1bce9b","#f8b6a5", "#1a7158")
 
 ### NEED TO FIGURE OUT WHY IT'S NOT WORKING WITH GITHUB FOLDER ### 
 b64 <- base64enc::dataURI(file="C:/Users/ybai/Documents/GitHub/FP2020AYApp/FP2020AYApp/FP2020AYApp/FP2020_RGB_NEW.png", mime="image/png")
@@ -255,7 +266,7 @@ server <- function(input, output) {
     tags$span(
       popify(bsButton("info0", "What is this?", size = "extra-small"), 
              "Definition",
-             "Total and Percentage of 10-14, 15-19, and 20-24 out of women aged 10-49. Women aged 15-49 are considered women of reproductive age"),
+             "Total and Percentage of 10-14, 15-19, and 20-24 out of women aged 10-49. Women aged 15-49 are considered women of reproductive age. Blue represents 10-14, light green represents 15-19, and dark green represents 20-24."),
     )
   })
   
@@ -263,7 +274,7 @@ server <- function(input, output) {
     tags$span(
       popify(bsButton("info0a", "What is this?", size = "extra-small"), 
              "Definition",
-             "Order of key life events that indicate when most adolescents and young people first marry, engage in sex, give birth"),
+             "Order of key life events that indicate when most adolescents and young people first marry, engage in sex, give birth. Yellow represents first marriage, orange represents first sex, and purple represents first birth."),
     )
   })
   
@@ -271,14 +282,14 @@ server <- function(input, output) {
     tags$span(
       popify(bsButton("infoTUnMarr", "What is this?", size = "extra-small"), 
              "Definition",
-             "Percentage of unmarried sexually active women using a traditional contraceptive method"),
+             "Percentage of unmarried sexually active women using a traditional contraceptive method. Light green represents 15-19 and dark green represents 20-24."),
     )
   })
   output$infoTMarr <- renderUI({
     tags$span(
       popify(bsButton("infoTMarr", "What is this?", size = "extra-small"), 
              "Definition",
-             "Percentage of married women using a traditional contraceptive method"),
+             "Percentage of married women using a traditional contraceptive method. Light green represents 15-19, pale pink represents 15-24, and dark green represents 20-24."),
     )
   })
   
@@ -286,35 +297,35 @@ server <- function(input, output) {
     tags$span(
       popify(bsButton("infoNever", "What is this?", size = "extra-small"), 
              "Definition",
-             "Percentage of women who never had intercourse"),
+             "Percentage of women who never had intercourse. Light green represents 15-19 and dark green represents 20-24."),
     )
   })
   output$infoRecent <- renderUI({
     tags$span(
       popify(bsButton("infoRecent", "What is this?", size = "extra-small"), 
              "Definition",
-             "Percentage of women who were sexually activity in the four weeks preceding the survey"),
+             "Percentage of women who were sexually activity in the four weeks preceding the survey. Light green represents 15-19 and dark green represents 20-24."),
     )
   })
   output$infoUnMarr <- renderUI({
     tags$span(
       popify(bsButton("infoUnMarr", "What is this?", size = "extra-small"), 
              "Definition",
-             "Percentage of unmarried sexually active women age 15-24 who reported using a modern contraceptive method"),
+             "Percentage of unmarried sexually active women age 15-24 who reported using a modern contraceptive method. Light green represents 15-19 and dark green represents 20-24."),
     )
   })
   output$infoMarr <- renderUI({
     tags$span(
       popify(bsButton("infoMarr", "What is this?", size = "extra-small"), 
              "Definition",
-             "Percentage of married women age 15-24 who reported using a modern contraceptive method"),
+             "Percentage of married women age 15-24 who reported using a modern contraceptive method. Light green represents 15-19, pale pink represents 15-24, and dark green represents 20-24."),
     )
   })
   output$infoCondom <- renderUI({
     tags$span(
       popify(bsButton("infoCondom", "What is this?", size = "extra-small"), 
              "Definition",
-             "Percentage of young women age 15-24 who reported using a condom at last sexual intercourse, of all young women who had sex with more than one partner in the 12 months preceding the survey"),
+             "Percentage of young women age 15-24 who reported using a condom at last sexual intercourse, of all young women who had sex with more than one partner in the 12 months preceding the survey. Pale pink represents 15-24."),
     )
   })
   #Code for Information Buttons End
@@ -412,7 +423,7 @@ server <- function(input, output) {
     fig <- (ggplot(ayfp_sex_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
     fig + coord_flip() + theme_classic() + 
       geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-      scale_fill_manual(values = cbp2, name = "Age Group") + 
+      scale_fill_manual(values = cbp3, name = "Age Group") + 
       labs(title = "Sexual Activity %") + theme(axis.line.y=element_blank(),
                                                 axis.text.y=element_blank(),
                                                 axis.title.x=element_blank(),
@@ -441,7 +452,7 @@ server <- function(input, output) {
     fig <- (ggplot(ayfp_never_res(), aes(x= reorder(`Age.Group`,`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
     
     fig + coord_flip() + theme_classic() + 
-      geom_text(aes(label=`Percent`), color="black", size=3.5) + scale_fill_manual(values = cbp2, name = "Age Group") + 
+      geom_text(aes(label=`Percent`), color="black", size=3.5) + scale_fill_manual(values = cbp3, name = "Age Group") + 
       labs(title= "Never Had Sex %") + theme(axis.line.y=element_blank(),
                                              axis.text.y=element_blank(),
                                              axis.title.x=element_blank(),
@@ -512,7 +523,7 @@ server <- function(input, output) {
     
     fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
       labs( subtitle = "Unmarried Sexually Active %") + 
-      scale_fill_manual(values = cbp2, name = "Age Group") + 
+      scale_fill_manual(values = cbp3, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
             axis.title.x=element_blank(),
@@ -546,7 +557,7 @@ server <- function(input, output) {
     
     fig + coord_flip() + theme_classic() + geom_text(aes(label= round(`Percent`,1)), color="black", size=3.5) + 
       labs(subtitle = "Married Women %") +
-      scale_fill_manual(values = cbp2, name = "Age Group") + 
+      scale_fill_manual(values = cbp5, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
             axis.title.x=element_blank(),
@@ -606,7 +617,7 @@ server <- function(input, output) {
     
     fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
       labs(subtitle = "Unmarried Sexually Active %") +
-      scale_fill_manual(values = cbp2, name = "Age Group") + 
+      scale_fill_manual(values = cbp3, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
             axis.title.x=element_blank(),
@@ -635,7 +646,7 @@ server <- function(input, output) {
     
     fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
       labs(subtitle = "Married Sexually Active %") +
-      scale_fill_manual(values = cbp2, name = "Age Group") + 
+      scale_fill_manual(values = cbp5, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
             axis.title.x=element_blank(),
