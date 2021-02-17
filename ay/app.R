@@ -133,7 +133,8 @@ ui <- navbarPage(
                     plotOutput("graph", width = "75%", height = "150px")    
              ),
              column(4,
-             )
+             ),
+             downloadButton("downloadGraph", "Download Graph")
            ),
            # fluidRow(
            #   column(8,
@@ -354,7 +355,34 @@ server <- function(input, output) {
             legend.position = "right")+
       coord_flip()+ scale_y_reverse()
     
+    output$downloadGraph <- downloadHandler(
+      filename = function() {
+        paste("Adolescents and Youth", "png", sep = ".")
+      }, 
+      content = function(file) {
+        png(file) 
+        (bar_one <- (ggplot(ay_res(), aes(Country, Count, fill = Age_Group)) + geom_bar(stat = "identity") + 
+                       geom_text(aes(label=paste0(Count,"%", " ", "(", (round(Round_Total/1000000,1))," ", "Million", ")")), color="black", size=3.5, position = position_stack(vjust = 0.5)))
+          bar_one + theme_classic()  +labs(subtitle = "Adolescents and Youth") + 
+            scale_fill_manual(values = cbp2, labels = c("Young Adolescents (10-14)", "Older Adolescents (15-19)","Older Youth (20-24)"), name = "Age Group") + 
+            theme(axis.line.y=element_blank(),
+                  axis.text.y=element_blank(),
+                  axis.title.y=element_blank(),
+                  axis.title.x = element_blank(),
+                  axis.ticks.y=element_blank(),
+                  axis.text.x =element_blank(),
+                  axis.ticks.x =element_blank(),
+                  axis.line.x =element_blank(),
+                  legend.position = "right")+
+            coord_flip()+ scale_y_reverse()
+           )
+        dev.off()
+  }, 
+    )
+    
   })
+  
+  
   #End Plot
   
   
@@ -435,6 +463,8 @@ server <- function(input, output) {
                                                 legend.position = "bottom")
     
   })
+  
+  
   #END PLOT
   
   #NEW PLOT: Ever Sexual Activity 
