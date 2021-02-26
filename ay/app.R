@@ -147,10 +147,10 @@ ui <- navbarPage(
            fluidRow(
              HTML( paste(h3("Key Life Events"),uiOutput("info0a"), '<br/>')
              ),
-             column(8,
+             column(6,
                     plotOutput("linegraph", width = "75%", height = "200px")
              ),
-             column(4,
+             column(6,
                     tableOutput("table")
              ),
            ),
@@ -169,20 +169,17 @@ ui <- navbarPage(
              ),
            ),
            fluidRow(
-             HTML( paste(h3("Modern Contraceptive Method Prevalence"), '<br/>')
+             HTML( paste(h3("Modern Contraceptive Prevalence"), '<br/>')
              ),
-             column(4,uiOutput("infoUnMarr"),
+             column(6,uiOutput("infoUnMarr"),
                     plotOutput("mod_con", width = "60%", height = "200px")
              ),
-             column(4,uiOutput("infoMarr"),
+             column(6,uiOutput("infoMarr"),
                     plotOutput("mod_marr",  width = "60%", height = "200px")
-             ),
-             column(4, uiOutput("infoCondom"),
-                    plotOutput("con_use", width = "60%", height = "120px")
              ),
            ),
            fluidRow(
-             HTML( paste(h3("Traditional Contraceptive Method Prevalence"), '<br/>')
+             HTML( paste(h3("Traditional Contraceptive Prevalence"), '<br/>')
              ),
              column(6,uiOutput("infoTUnmarr"),
                     plotOutput("trad_unmarr", width = "60%", height = "200px")
@@ -191,6 +188,13 @@ ui <- navbarPage(
                     plotOutput("trad_marr", width = "60%", height = "200px")
              ),
            ),
+           fluidRow(
+             HTML( paste(h3("Condom Use at Last Sex"), '<br/>')
+             ),
+             column(6, uiOutput("infoCondom"),
+                    plotOutput("con_use", width = "60%", height = "120px")
+             ),
+           ), 
            fluidRow(
              HTML( paste(h5("More Info"), '<br/>')
              ),
@@ -355,62 +359,18 @@ server <- function(input, output) {
             legend.position = "right")+
       coord_flip()+ scale_y_reverse()
     
-    output$downloadGraph <- downloadHandler(
-      filename = function() {
-        paste("Adolescents and Youth", "png", sep = ".")
-      }, 
-      content = function(file) {
-        png(file) 
-        (bar_one <- (ggplot(ay_res(), aes(Country, Count, fill = Age_Group)) + geom_bar(stat = "identity") + 
-                       geom_text(aes(label=paste0(Count,"%", " ", "(", (round(Round_Total/1000000,1))," ", "Million", ")")), color="black", size=3.5, position = position_stack(vjust = 0.5)))
-          bar_one + theme_classic()  +labs(subtitle = "Adolescents and Youth") + 
-            scale_fill_manual(values = cbp2, labels = c("Young Adolescents (10-14)", "Older Adolescents (15-19)","Older Youth (20-24)"), name = "Age Group") + 
-            theme(axis.line.y=element_blank(),
-                  axis.text.y=element_blank(),
-                  axis.title.y=element_blank(),
-                  axis.title.x = element_blank(),
-                  axis.ticks.y=element_blank(),
-                  axis.text.x =element_blank(),
-                  axis.ticks.x =element_blank(),
-                  axis.line.x =element_blank(),
-                  legend.position = "right")+
-            coord_flip()+ scale_y_reverse()
-           )
-        dev.off()
-  }, 
-    )
-    
+  })
+  output$downloadGraph <- downloadHandler(
+    filename = function() {
+      paste("Adolescents and Youth", "png", sep = ".")
+    }, 
+    content = function(file) {
+      png(file) 
+      ay_res()
+      dev.off()
   })
   
   
-  #End Plot
-  
-  
-  #New Plot: Women of Reproductive Age
-  # small_ay_res <- reactive({
-  #   res1 <- aypopdata %>% filter(aypopdata$Country == input$country)
-  #   req(nrow(res1) > 0)
-  #   res1
-  # })
-  # 
-  # output$wide <- renderPlot({
-  #   
-  #   bartwo <- (ggplot(small_ay_res(), aes(Country, `Women of Reproductive Age (15-49)`)) +
-  #                geom_bar(stat = "identity", fill = "#7294D4") + 
-  #                labs(subtitle = "Women of Reproductive Age (15-49)")  +
-  #                geom_text(aes(label=paste0((round(Round_Count_WRA/1000000,1))," ", "Million")), color="black", size=3.50, hjust = 5.0))
-  #   
-  #   bartwo + theme_classic() + coord_flip()  + theme(axis.line.y=element_blank(),
-  #                                                    axis.text.y=element_blank(),
-  #                                                    axis.title.x=element_blank(),
-  #                                                    axis.title.y=element_blank(),
-  #                                                    axis.ticks.y=element_blank(),
-  #                                                    axis.text.x =element_blank(),
-  #                                                    axis.ticks.x =element_blank(),
-  #                                                    axis.line.x =element_blank(),
-  #                                                    legend.position = "bottom")
-  #   
-  # })
   ### END PLOT
   
   
@@ -513,9 +473,12 @@ server <- function(input, output) {
     timeline_plot<- timeline_plot + 
       theme_classic() + 
       labs(col="Events") + 
-      scale_color_manual(values = cbp1) + xlim(15, 25)
+      scale_color_manual(values = cbp1) + xlim(15, 25) +
+      scale_x_continuous(name="Median Age", breaks=seq(15, 25, 2), labels=c("15", " ", " ", " ", " ", "25"), limits=c(15, 25)) 
     
-    timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "black", size=1)
+    #timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "black", size=1)
+    timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "#474747", size=1)  
+    
     
     timeline_plot<- timeline_plot + geom_point(aes(y=0), size=6) 
     
@@ -524,7 +487,7 @@ server <- function(input, output) {
                                           axis.title.x=element_blank(),
                                           axis.title.y=element_blank(),
                                           axis.ticks.y=element_blank(),
-                                          axis.text.x =element_blank(),
+                                          #axis.text.x =element_blank(),
                                           axis.ticks.x =element_blank(),
                                           axis.line.x =element_blank(),
                                           legend.position = "right"
@@ -552,7 +515,7 @@ server <- function(input, output) {
     fig <- (ggplot(ayfp_mod_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
     
     fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-      labs( subtitle = "Unmarried Sexually Active %") + 
+      labs( subtitle = "Unmarried Sexually Active %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
       scale_fill_manual(values = cbp3, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
@@ -586,7 +549,7 @@ server <- function(input, output) {
     fig <- (ggplot(ayfp_mod_marr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
     
     fig + coord_flip() + theme_classic() + geom_text(aes(label= round(`Percent`,1)), color="black", size=3.5) + 
-      labs(subtitle = "Married Women %") +
+      labs(subtitle = "Married %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
       scale_fill_manual(values = cbp5, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
@@ -616,7 +579,7 @@ server <- function(input, output) {
     fig <- (ggplot(ayfp_con_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
     
     fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-      labs(subtitle = "Condom Use During Last Sex %") +
+      labs(subtitle = "Condom Use During Last Sex %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
       scale_fill_manual(values = cbp4, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
@@ -646,7 +609,7 @@ server <- function(input, output) {
     fig <- (ggplot(ayfp_trad_unmarr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
     
     fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-      labs(subtitle = "Unmarried Sexually Active %") +
+      labs(subtitle = "Unmarried Sexually Active %") + theme(plot.subtitle=element_text(size=13, color="black")) +
       scale_fill_manual(values = cbp3, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
@@ -675,7 +638,7 @@ server <- function(input, output) {
     fig <- (ggplot(ayfp_trad_marr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
     
     fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-      labs(subtitle = "Married Sexually Active %") +
+      labs(subtitle = "Married %") + theme(plot.subtitle=element_text(size=13, color="black")) +
       scale_fill_manual(values = cbp5, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
