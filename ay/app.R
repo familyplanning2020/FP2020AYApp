@@ -129,10 +129,10 @@ ui <- navbarPage(
                  h3("Adolescent & Youth Population"), uiOutput("info0"), '<br/>'
                )
              ),
-             column(8,
+             column(6,
                     plotOutput("graph", width = "75%", height = "150px")    
              ),
-             column(4,
+             column(6,
              ),
              downloadButton("downloadGraph", "Download Graph")
            ),
@@ -269,7 +269,7 @@ server <- function(input, output) {
   #Information Buttons 
   output$info0 <- renderUI({
     tags$span(
-      popify(bsButton("info0", "What is this?", size = "extra-small"), 
+      popify(bsButton("info0", icon("info"),size = "extra-small"), 
              "Definition",
              "Total and Percentage of 10-14, 15-19, and 20-24 out of women aged 10-49. Women aged 15-49 are considered women of reproductive age. Blue represents 10-14, light green represents 15-19, and dark green represents 20-24."),
     )
