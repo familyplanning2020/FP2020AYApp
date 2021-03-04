@@ -18,9 +18,10 @@ library(plyr)
 library(factorial2x2)
 library(shinyBS)
 library(DT)
+library(cowplot)
 
-setwd("C:/Users/ybai/Documents/GitHub/FP2020AYApp/FP2020AYApp/FP2020AYApp")
-aypopdata <- read_excel("CleanedAYData.xlsx", sheet = "AYPOP")
+setwd("C:/Users/sfarid/Documents/FP2020AYApp")
+aypopdata <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYPOP")
 aypopdata$sum_10_49 =rowSums(aypopdata[,2:3])
 aypopdata$prop10_14 =round((aypopdata$`Young Adolescents (10-14)`/aypopdata$sum_10_49)*100,1)
 aypopdata$prop15_19 =round((aypopdata$`Older Adolescents (15-19)`/aypopdata$sum_10_49)*100,1)
@@ -32,8 +33,9 @@ aypopdata$round_sum_20_24=round(aypopdata$`Older Youth (20-24)`,-4)
 
 aypopdata.prop <- aypopdata %>% gather(Age_Group,Count,prop10_14, prop15_19, prop20_24)
 aypopdata.sum <- aypopdata %>% gather(Age_Group,Round_Total,round_sum_10_14, round_sum_15_19, round_sum_20_24)
-aypopdata.sum=aypopdata.sum[, 16]
+aypopdata.sum=aypopdata.sum[, 13]
 aypopdata.long <- cbind(aypopdata.prop, aypopdata.sum)
+aypopdata.long$survey = sample(100, size = nrow(aypopdata.long), replace = TRUE)
 #aypopdata.long =aypopdata.long[, -16]
 
 kle_age <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
@@ -49,7 +51,7 @@ kle_marriage=kle_marriage[, -c(4)]
 kle_marriage$`% of adolescent and youth (15-24) who are married`=data
 colnames(kle_marriage)[6]="% of adolescent and youth (15-24) who are married"
 
-ayfp <- read_excel("CleanedAYData.xlsx", sheet = "AYFPUse")
+ayfp <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYFPUse")
 ayfp$`MCPR for married adolescent and youth (15-24)`= round(ayfp$`MCPR for married adolescent and youth (15-24)`, 1)
 
 # Round the counts of AY popualtion & WRA Population  ==> SHIZA DID THIS <== 
@@ -79,7 +81,7 @@ cbp4<- c("#f8b6a5")
 cbp5 <- c("#1bce9b","#f8b6a5", "#1a7158")
 
 ### NEED TO FIGURE OUT WHY IT'S NOT WORKING WITH GITHUB FOLDER ### 
-b64 <- base64enc::dataURI(file="C:/Users/ybai/Documents/GitHub/FP2020AYApp/FP2020AYApp/FP2020AYApp/FP2020_RGB_NEW.png", mime="image/png")
+b64 <- base64enc::dataURI(file="C:/Users/sfarid/Documents/FP2020AYApp/FP2020_RGB_NEW.png", mime="image/png")
 
 # Define UI for application 
 ui <- navbarPage(                  
@@ -126,7 +128,7 @@ ui <- navbarPage(
            fluidRow( 
              HTML(
                paste(
-                 h3("Adolescent & Youth Population"), uiOutput("info0"), '<br/>'
+                 h3("Adolescent & Youth Population"), downloadButton("downloadGraph", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("info0"), '<br/>'
                )
              ),
              column(6,
@@ -134,7 +136,7 @@ ui <- navbarPage(
              ),
              column(6,
              ),
-             downloadButton("downloadGraph", "Download Graph")
+             #downloadButton("downloadGraph", "Download Graph")
            ),
            # fluidRow(
            #   column(8,
@@ -145,7 +147,7 @@ ui <- navbarPage(
            # ),
            
            fluidRow(
-             HTML( paste(h3("Key Life Events"),uiOutput("info0a"), '<br/>')
+             HTML( paste(h3("Key Life Events"), downloadButton("downloadGraph1", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'),uiOutput("info0a"), '<br/>')
              ),
              column(6,
                     plotOutput("linegraph", width = "75%", height = "200px")
@@ -161,37 +163,38 @@ ui <- navbarPage(
                )
              ),
              
-             column(6, uiOutput("infoRecent"),
+             column(6,  downloadButton("downloadGraph2", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoRecent"), 
                     plotOutput("sex_activity_graph", width = "60%", height = "200px")
              ),
-             column(6, uiOutput("infoNever"),
+             column(6, downloadButton("downloadGraph3", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoNever"),
                     plotOutput("never_sex_graph", width = "60%", height = "200px")
              ),
            ),
            fluidRow(
              HTML( paste(h3("Modern Contraceptive Prevalence"), '<br/>')
              ),
-             column(6,uiOutput("infoUnMarr"),
+             column(6, downloadButton("downloadGraph4", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoUnMarr"),
                     plotOutput("mod_con", width = "60%", height = "200px")
              ),
-             column(6,uiOutput("infoMarr"),
+             column(6,downloadButton("downloadGraph5", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoMarr"),
                     plotOutput("mod_marr",  width = "60%", height = "200px")
              ),
+             
            ),
            fluidRow(
              HTML( paste(h3("Traditional Contraceptive Prevalence"), '<br/>')
              ),
-             column(6,uiOutput("infoTUnmarr"),
+             column(6, downloadButton("downloadGraph6", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoTUnmarr"),
                     plotOutput("trad_unmarr", width = "60%", height = "200px")
              ),
-             column(6, uiOutput("infoTMarr"),
+             column(6, downloadButton("downloadGraph7", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoTMarr"),
                     plotOutput("trad_marr", width = "60%", height = "200px")
              ),
            ),
            fluidRow(
              HTML( paste(h3("Condom Use at Last Sex"), '<br/>')
              ),
-             column(6, uiOutput("infoCondom"),
+             column(6, downloadButton("downloadGraph8", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoCondom"),
                     plotOutput("con_use", width = "60%", height = "120px")
              ),
            ), 
@@ -263,6 +266,8 @@ ui <- navbarPage(
 # Draw Bargraphs and Figures
 server <- function(input, output) {
   
+  #for graph reactive downloads 
+  vals <- reactiveValues()
   
   output$instructions <- renderText("Some text")
   
@@ -277,7 +282,7 @@ server <- function(input, output) {
   
   output$info0a <- renderUI({
     tags$span(
-      popify(bsButton("info0a", "What is this?", size = "extra-small"), 
+      popify(bsButton("info0a", icon("info"), size = "extra-small"), 
              "Definition",
              "Order of key life events that indicate when most adolescents and young people first marry, engage in sex, give birth. Yellow represents first marriage, orange represents first sex, and purple represents first birth."),
     )
@@ -285,14 +290,14 @@ server <- function(input, output) {
   
   output$infoTUnmarr <- renderUI({
     tags$span(
-      popify(bsButton("infoTUnMarr", "What is this?", size = "extra-small"), 
+      popify(bsButton("infoTUnMarr", icon("info"), size = "extra-small"), 
              "Definition",
              "Percentage of unmarried sexually active women using a traditional contraceptive method. Light green represents 15-19 and dark green represents 20-24."),
     )
   })
   output$infoTMarr <- renderUI({
     tags$span(
-      popify(bsButton("infoTMarr", "What is this?", size = "extra-small"), 
+      popify(bsButton("infoTMarr", icon("info"), size = "extra-small"), 
              "Definition",
              "Percentage of married women using a traditional contraceptive method. Light green represents 15-19, pale pink represents 15-24, and dark green represents 20-24."),
     )
@@ -300,40 +305,41 @@ server <- function(input, output) {
   
   output$infoNever <- renderUI({
     tags$span(
-      popify(bsButton("infoNever", "What is this?", size = "extra-small"), 
+      popify(bsButton("infoNever", icon("info"), size = "extra-small"), 
              "Definition",
              "Percentage of women who never had intercourse. Light green represents 15-19 and dark green represents 20-24."),
     )
   })
   output$infoRecent <- renderUI({
     tags$span(
-      popify(bsButton("infoRecent", "What is this?", size = "extra-small"), 
+      popify(bsButton("infoRecent", icon("info"), size = "extra-small"), 
              "Definition",
              "Percentage of women who were sexually activity in the four weeks preceding the survey. Light green represents 15-19 and dark green represents 20-24."),
     )
   })
   output$infoUnMarr <- renderUI({
     tags$span(
-      popify(bsButton("infoUnMarr", "What is this?", size = "extra-small"), 
+      popify(bsButton("infoUnMarr", icon("info"), size = "extra-small"), 
              "Definition",
              "Percentage of unmarried sexually active women age 15-24 who reported using a modern contraceptive method. Light green represents 15-19 and dark green represents 20-24."),
     )
   })
   output$infoMarr <- renderUI({
     tags$span(
-      popify(bsButton("infoMarr", "What is this?", size = "extra-small"), 
+      popify(bsButton("infoMarr", icon("info"), size = "extra-small"), 
              "Definition",
              "Percentage of married women age 15-24 who reported using a modern contraceptive method. Light green represents 15-19, pale pink represents 15-24, and dark green represents 20-24."),
     )
   })
   output$infoCondom <- renderUI({
     tags$span(
-      popify(bsButton("infoCondom", "What is this?", size = "extra-small"), 
+      popify(bsButton("infoCondom", icon("info"), size = "extra-small"), 
              "Definition",
              "Percentage of young women age 15-24 who reported using a condom at last sexual intercourse, of all young women who had sex with more than one partner in the 12 months preceding the survey. Pale pink represents 15-24."),
     )
   })
   #Code for Information Buttons End
+
   
   #Start Code for Graphs  
   #New Plot: Population by Age Groups
@@ -345,8 +351,8 @@ server <- function(input, output) {
   
   output$graph <- renderPlot({
     bar_one <- (ggplot(ay_res(), aes(Country, Count, fill = Age_Group)) + geom_bar(stat = "identity") + 
-                  geom_text(aes(label=paste0(Count,"%", " ", "(", (round(Round_Total/1000000,1))," ", "Million", ")")), color="black", size=3.5, position = position_stack(vjust = 0.5)))
-    bar_one + theme_classic()  +labs(subtitle = "Adolescents and Youth") + 
+                  geom_text(aes(label=paste0(Count,"%", " ", "(", (round(Round_Total/1000000,1))," ", "Million", ")")), color="black", size=3.5, position = position_stack(vjust = 0.5))) +
+     theme_classic()  +
       scale_fill_manual(values = cbp2, labels = c("Young Adolescents (10-14)", "Older Adolescents (15-19)","Older Youth (20-24)"), name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
@@ -357,7 +363,12 @@ server <- function(input, output) {
             axis.ticks.x =element_blank(),
             axis.line.x =element_blank(),
             legend.position = "right")+
-      coord_flip()+ scale_y_reverse()
+      coord_flip()+ scale_y_reverse() +
+      labs(caption="test", size=7) 
+    
+    vals$bar_one <- bar_one
+    print(bar_one)
+      
     
   })
   output$downloadGraph <- downloadHandler(
@@ -365,8 +376,8 @@ server <- function(input, output) {
       paste("Adolescents and Youth", "png", sep = ".")
     }, 
     content = function(file) {
-      png(file) 
-      ay_res()
+      png(file, width = 980, height = 400) 
+      print(vals$bar_one)
       dev.off()
   })
   
@@ -408,8 +419,8 @@ server <- function(input, output) {
     validate(
       need(nrow(ayfp_sex_res()) > 0, "No data for this selection.")
     )
-    fig <- (ggplot(ayfp_sex_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
-    fig + coord_flip() + theme_classic() + 
+    sex_act <- (ggplot(ayfp_sex_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
+    coord_flip() + theme_classic() + 
       geom_text(aes(label=`Percent`), color="black", size=3.5) + 
       scale_fill_manual(values = cbp3, name = "Age Group") + 
       labs(title = "Sexual Activity %") + theme(axis.line.y=element_blank(),
@@ -422,8 +433,21 @@ server <- function(input, output) {
                                                 axis.line.x =element_blank(),
                                                 legend.position = "bottom")
     
+    vals$sex_act<- sex_act
+    print(sex_act)
+    
+    
   })
-  
+  output$downloadGraph2 <- downloadHandler(
+    filename = function() {
+      paste("Sexual Activity", "png", sep = ".")
+    }, 
+    content = function(file) {
+      png(file, width = 980, height = 400) 
+      print(vals$sex_act)
+      dev.off()
+    })
+
   
   #END PLOT
   
@@ -439,9 +463,8 @@ server <- function(input, output) {
   })
   
   output$never_sex_graph <- renderPlot({
-    fig <- (ggplot(ayfp_never_res(), aes(x= reorder(`Age.Group`,`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
-    
-    fig + coord_flip() + theme_classic() + 
+    never_sex<- (ggplot(ayfp_never_res(), aes(x= reorder(`Age.Group`,`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+      coord_flip() + theme_classic() + 
       geom_text(aes(label=`Percent`), color="black", size=3.5) + scale_fill_manual(values = cbp3, name = "Age Group") + 
       labs(title= "Never Had Sex %") + theme(axis.line.y=element_blank(),
                                              axis.text.y=element_blank(),
@@ -453,7 +476,20 @@ server <- function(input, output) {
                                              axis.line.x =element_blank(),
                                              legend.position = "bottom")
     
+    vals$never_sex<- never_sex
+    print(never_sex)
+    
   })
+  output$downloadGraph3 <- downloadHandler(
+    filename = function() {
+      paste("Never Had Sex", "png", sep = ".")
+    }, 
+    content = function(file) {
+      png(file, width = 980, height = 400) 
+      print(vals$never_sex)
+      dev.off()
+    })
+  
   #END PLOT
   
   #NEW PLOT
@@ -469,20 +505,14 @@ server <- function(input, output) {
   output$linegraph <- renderPlot({
     
     #Create Plot
-    timeline_plot<- ggplot(kle_age_res(), aes(x=Age, y=0, col=Event, label=Event))
-    timeline_plot<- timeline_plot + 
+    timeline_plot<- ggplot(kle_age_res(), aes(x=Age, y=0, col=Event, label=Event))+
       theme_classic() + 
       labs(col="Events") + 
       scale_color_manual(values = cbp1) + xlim(15, 25) +
-      scale_x_continuous(name="Median Age", breaks=seq(15, 25, 2), labels=c("15", " ", " ", " ", " ", "25"), limits=c(15, 25)) 
-    
-    #timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "black", size=1)
-    timeline_plot<- timeline_plot + geom_hline(yintercept=0, color = "#474747", size=1)  
-    
-    
-    timeline_plot<- timeline_plot + geom_point(aes(y=0), size=6) 
-    
-    timeline_plot<- timeline_plot + theme(axis.line.y=element_blank(),
+      scale_x_continuous(name="Median Age", breaks=seq(15, 25, 2), labels=c("15", " ", " ", " ", " ", "25"), limits=c(15, 25)) +
+      geom_hline(yintercept=0, color = "#474747", size=1)  +
+      geom_point(aes(y=0), size=6) +
+      theme(axis.line.y=element_blank(),
                                           axis.text.y=element_blank(),
                                           axis.title.x=element_blank(),
                                           axis.title.y=element_blank(),
@@ -490,14 +520,26 @@ server <- function(input, output) {
                                           #axis.text.x =element_blank(),
                                           axis.ticks.x =element_blank(),
                                           axis.line.x =element_blank(),
-                                          legend.position = "right"
-    )
-    timeline_plot <- timeline_plot +  
+                                          legend.position = "right") +
       geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5, color = "black",check_overlap = TRUE) + 
       geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) 
     #ggtitle("Median Age at First Marriage, Sex and Birth")
     timeline_plot
+    
+    vals$timeline_plot<- timeline_plot
+    print(timeline_plot)
+    
+    
   })
+  output$downloadGraph1 <- downloadHandler(
+    filename = function() {
+      paste("Key Life Events", "png", sep = ".")
+    }, 
+    content = function(file) {
+      png(file, width = 980, height = 400) 
+      print(vals$timeline_plot)
+      dev.off()
+    })
   
   
   
@@ -512,9 +554,8 @@ server <- function(input, output) {
   })
   
   output$mod_con <- renderPlot({
-    fig <- (ggplot(ayfp_mod_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
-    
-    fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+   mcp_aw <- (ggplot(ayfp_mod_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
+    coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
       labs( subtitle = "Unmarried Sexually Active %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
       scale_fill_manual(values = cbp3, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
@@ -527,7 +568,21 @@ server <- function(input, output) {
             axis.line.x =element_blank(),
             legend.position = "bottom")
     
+    vals$mcp_aw <- mcp_aw
+    print(mcp_aw)
+    
+    
   })
+  output$downloadGraph4 <- downloadHandler(
+    filename = function() {
+      paste("MCP- UMSA", "png", sep = ".")
+    }, 
+    content = function(file) {
+      png(file, width = 980, height = 400) 
+      print(vals$mcp_aw)
+      dev.off()
+    })
+  
   #END PLOT
   
   ### NEW PLOT Modern Contraceptive Use: Married Women
@@ -546,9 +601,8 @@ server <- function(input, output) {
   })
   
   output$mod_marr <- renderPlot({
-    fig <- (ggplot(ayfp_mod_marr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
-    
-    fig + coord_flip() + theme_classic() + geom_text(aes(label= round(`Percent`,1)), color="black", size=3.5) + 
+    mcp_mw <- (ggplot(ayfp_mod_marr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+     coord_flip() + theme_classic() + geom_text(aes(label= round(`Percent`,1)), color="black", size=3.5) + 
       labs(subtitle = "Married %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
       scale_fill_manual(values = cbp5, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
@@ -560,7 +614,22 @@ server <- function(input, output) {
             axis.ticks.x =element_blank(),
             axis.line.x =element_blank(),
             legend.position = "bottom")
+    
+    vals$mcp_mw <- mcp_mw
+    print(mcp_mw)
+    
+    
   })
+  output$downloadGraph5 <- downloadHandler(
+    filename = function() {
+      paste("MCP- Married Women", "png", sep = ".")
+    }, 
+    content = function(file) {
+      png(file, width = 980, height = 400) 
+      print(vals$mcp_mw)
+      dev.off()
+    })
+ 
   
   #END PLOT
   
@@ -576,9 +645,8 @@ server <- function(input, output) {
   })
   
   output$con_use <- renderPlot({
-    fig <- (ggplot(ayfp_con_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
-    
-    fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+    fig <- (ggplot(ayfp_con_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
+      coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
       labs(subtitle = "Condom Use During Last Sex %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
       scale_fill_manual(values = cbp4, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
@@ -590,6 +658,20 @@ server <- function(input, output) {
             axis.ticks.x =element_blank(),
             axis.line.x =element_blank(),
             legend.position = "bottom")
+    
+    vals$fig <- fig
+    print(fig)
+    
+    
+  })
+  output$downloadGraph8 <- downloadHandler(
+    filename = function() {
+      paste("Condom Use at Last Sex", "png", sep = ".")
+    }, 
+    content = function(file) {
+      png(file, width = 980, height = 400) 
+      print(vals$fig)
+      dev.off()
   })
   
   #TRADITIONAL USE PLOTS START
@@ -606,9 +688,8 @@ server <- function(input, output) {
   })
   
   output$trad_unmarr <- renderPlot({
-    fig <- (ggplot(ayfp_trad_unmarr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
-    
-    fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+    tcp_aw <- (ggplot(ayfp_trad_unmarr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+    coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
       labs(subtitle = "Unmarried Sexually Active %") + theme(plot.subtitle=element_text(size=13, color="black")) +
       scale_fill_manual(values = cbp3, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
@@ -620,8 +701,22 @@ server <- function(input, output) {
             axis.ticks.x =element_blank(),
             axis.line.x =element_blank(),
             legend.position = "bottom")
+    
+    vals$tcp_aw <- tcp_aw
+    print(tcp_aw)
+    
+    
   })
-  
+  output$downloadGraph6 <- downloadHandler(
+    filename = function() {
+      paste("TCP- UMSA", "png", sep = ".")
+    }, 
+    content = function(file) {
+      png(file, width = 980, height = 400) 
+      print(vals$tcp_aw)
+      dev.off()
+    })
+
   #NEW PLOT
   ayfp_trad_marr<- reactive({
     res <- ayfp %>% select(2,15,16,17) %>% filter(ayfp$Country == input$country)
@@ -635,9 +730,8 @@ server <- function(input, output) {
   })
   
   output$trad_marr <- renderPlot({
-    fig <- (ggplot(ayfp_trad_marr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))
-    
-    fig + coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+    tcp_mw <- (ggplot(ayfp_trad_marr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+    coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
       labs(subtitle = "Married %") + theme(plot.subtitle=element_text(size=13, color="black")) +
       scale_fill_manual(values = cbp5, name = "Age Group") + 
       theme(axis.line.y=element_blank(),
@@ -649,7 +743,22 @@ server <- function(input, output) {
             axis.ticks.x =element_blank(),
             axis.line.x =element_blank(),
             legend.position = "bottom")
+    
+    vals$tcp_mw <- tcp_mw
+    print(tcp_mw)
+    
+    
   })
+  output$downloadGraph7 <- downloadHandler(
+    filename = function() {
+      paste("TCP- Married Women", "png", sep = ".")
+    }, 
+    content = function(file) {
+      png(file, width = 980, height = 400) 
+      print(vals$tcp_mw)
+      dev.off()
+    })
+
 }
 
 # Run the application 
