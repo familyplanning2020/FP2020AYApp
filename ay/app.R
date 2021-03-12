@@ -150,7 +150,7 @@ ui <- navbarPage(
              HTML( paste(h3("Key Life Events"), downloadButton("downloadGraph1", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'),uiOutput("info0a"), '<br/>')
              ),
              column(6,
-                    plotOutput("linegraph", width = "75%", height = "200px")
+                    plotOutput("linegraph", width = "75%", height = "150px")
              ),
              column(6,
                     tableOutput("table")
@@ -505,24 +505,31 @@ server <- function(input, output) {
   output$linegraph <- renderPlot({
     
     #Create Plot
-    timeline_plot<- ggplot(kle_age_res(), aes(x=Age, y=0, col=Event, label=Event))+
+    timeline_plot<- ggplot(kle_age_res(), aes(x=Age, y=0.25, col=Event, label=""))+
       theme_classic() + 
-      labs(col="Events") + 
-      scale_color_manual(values = cbp1) + xlim(15, 25) +
-      scale_x_continuous(name="Median Age", breaks=seq(15, 25, 2), labels=c("15", " ", " ", " ", " ", "25"), limits=c(15, 25)) +
-      geom_hline(yintercept=0, color = "#474747", size=1)  +
-      geom_point(aes(y=0), size=6) +
+      #labs(col="Events") + 
+      geom_hline(yintercept = 0.25, color = 'grey50', size = 0.5) +
+      geom_point(aes(y=0.25), size=6) +
+      geom_text(aes (x = Age, y = 0.45, label = Age), size = 3.5, color = "black",check_overlap = TRUE) +  
+      scale_color_manual(values = cbp1) +
+      scale_x_continuous(name="Median Age", breaks=seq(15, 25, 2), labels=c("15", "17", "19", "21", "23", "25"), limits=c(15, 25), expand=c(0,0)) +
+      scale_y_continuous(limits=c(0,1)) +
       theme(axis.line.y=element_blank(),
-                                          axis.text.y=element_blank(),
-                                          axis.title.x=element_blank(),
-                                          axis.title.y=element_blank(),
-                                          axis.ticks.y=element_blank(),
-                                          #axis.text.x =element_blank(),
-                                          axis.ticks.x =element_blank(),
-                                          axis.line.x =element_blank(),
-                                          legend.position = "right") +
-      geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5, color = "black",check_overlap = TRUE) + 
-      geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) 
+            axis.text.y=element_blank(),
+            axis.title.y=element_blank(),
+            axis.ticks.y=element_blank(),
+            axis.line.x = element_line(size = 0.5, color = 'grey50'),
+            axis.text.x = element_text(size = 11),
+            axis.title.x=element_blank(),
+            axis.ticks.x =element_line(),
+            axis.ticks.length.x = unit(0.25, "cm"),
+            legend.position = "top",
+            legend.text = element_text(size = 11),
+            legend.title = element_blank()) 
+      #geom_hline(yintercept=0, color = "#474747", size=1)  +
+      #geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) 
+      # geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5, color = "black",check_overlap = TRUE) + 
+      # geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) 
     #ggtitle("Median Age at First Marriage, Sex and Birth")
     timeline_plot
     
