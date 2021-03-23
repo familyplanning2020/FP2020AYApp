@@ -81,7 +81,7 @@ cbp4<- c("#f8b6a5")
 cbp5 <- c("#1bce9b","#f8b6a5", "#1a7158")
 
 ### NEED TO FIGURE OUT WHY IT'S NOT WORKING WITH GITHUB FOLDER ### 
-b64 <- base64enc::dataURI(file="C:/Users/sfarid/Documents/FP2020AYApp/FP2020_RGB_NEW.png", mime="image/png")
+b64 <- base64enc::dataURI(file="FP2030_Logo_primary_color.png", mime="image/png")
 
 # Define UI for application 
 ui <- navbarPage(                  
