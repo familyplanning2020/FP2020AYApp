@@ -91,19 +91,20 @@ ui <- navbarPage(
   tabPanel("How to Use",
            HTML(
              paste(
-               h2("Adolescent and Youth Data App"),'<br/>',
-               h4("What is this?"),'<br/>',
-               h5("This is an interactive data app created by Family Planning 2020 (FP2020). FP2020 is a global partnership to empower women and girls 
-                                 by investing in rights-based family planning. This app was created to make adolescent and youth data more accessible. You will be able
-                                 to view, compare, and analyzw the adolescent and youth data that was released with the 2018-2019 FP2020 Annual Progress Report 
-                                 through different graphics and tables."),'<br/>', 
-               h4("Profile, Compare, and Analyze Pages"),'<br/>',
-               h5("The Profile Page includes individual country data on adolescents and youth population, key life events, prevalence of sexual activity, 
-                              modern contraceptive method prevalence, and traditional contraceptive method prevalence. The Compare Page provides the opportunity to view
-                              data from the profile page for multiple countries. The Analyze Page allows you to further analyze this data."),'<br/>',
-               h4("Have Questions? Contact us at info@familyplanning2020.org"),'<br/>'),
-             #tags$img(src = b64, align = "right", height = '100px', width = '100px')), 
-           )     
+               h1("Adolescent and Youth Data App"),'<br/>',
+               h2("What is this?"),'<br/>',
+               p("This is an interactive data app created by Family Planning 2020 (FP2020). FP2020 is a global partnership to empower women and girls
+                by investing in rights-based family planning. This app was created to make adolescent and youth data more accessible. You will be able
+                to view, compare, and analyzw the adolescent and youth data that was released with the 2018-2019 FP2020 Annual Progress Report
+                through different graphics and tables."),'<br/>',
+               h2("Profile, Compare, and Analyze Pages"),'<br/>',
+               p("The Profile Page includes individual country data on adolescents and youth population, key life events, prevalence of sexual activity,
+                modern contraceptive method prevalence, and traditional contraceptive method prevalence. The Compare Page provides the opportunity to view
+                data from the profile page for multiple countries. The Analyze Page allows you to further analyze this data."),'<br/>',
+               h2("Have Questions?"),
+               p("Contact us at info@familyplanning2020.org"),'<br/>'),
+             #tags$img(src = b64, align = "right", height = '100px', width = '100px')),
+           )
            
   ),
   
@@ -124,11 +125,11 @@ ui <- navbarPage(
                     )
              ),
              column(6,
-             )),
+             )), 
            fluidRow( 
              HTML(
-               paste(
-                 h3("Adolescent & Youth Population"), downloadButton("downloadGraph", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("info0"), '<br/>'
+               paste('<br/>',
+                     h3("Adolescent & Youth Population", style='display:inline; margin: 0px 0px 10px 17px'), uiOutput("info0", inline = TRUE), downloadButton("downloadGraph", "Download Graph", style='display:block; height:30px; width:125px; color:#636b6f; align:center; padding:4px; margin:20px 0px 0px 17px; font-size:90%'), '<br/>'
                )
              ),
              column(6,
@@ -147,7 +148,9 @@ ui <- navbarPage(
            # ),
            
            fluidRow(
-             HTML( paste(h3("Key Life Events"), downloadButton("downloadGraph1", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'),uiOutput("info0a"), '<br/>')
+             HTML(
+               paste('<br/>',
+                     h3("Key Life Events", style='display:inline; margin: 0px 0px 10px 17px'), uiOutput("info0a", inline=TRUE), downloadButton("downloadGraph1", "Download Graph", style='display:block; height:30px; width:125px; color:#636b6f; align:center; padding:4px; margin:20px 0px 0px 17px; font-size:90%'), '<br/>')
              ),
              column(6,
                     plotOutput("linegraph", width = "75%", height = "150px")
@@ -158,20 +161,21 @@ ui <- navbarPage(
            ),
            fluidRow(
              HTML(
-               paste(
-                 h3("Prevalence of Sexual Activity in the Last Month"), '<br/>'
-               )
+               paste('<br/>',
+                 h3("Prevalence of Sexual Activity in the Last Month", style='display:inline; margin: 0px 0px 10px 17px'), uiOutput("infoActivity", inline=TRUE), '<br/>')
              ),
              
-             column(6,  downloadButton("downloadGraph2", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoRecent"), 
+             column(6,  downloadButton("downloadGraph2", "Download Graph", style='display:block; height:30px; width:125px; color:#636b6f; align:left; padding:4px; margin:20px 0px 10px 0px; font-size:90%'), #uiOutput("infoRecent"),# 
                     plotOutput("sex_activity_graph", width = "60%", height = "200px")
              ),
-             column(6, downloadButton("downloadGraph3", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoNever"),
+             column(6, downloadButton("downloadGraph3", "Download Graph", style='display:block; height:30px; width:125px; color:#636b6f; align:left; padding:4px; margin:20px 0px 10px 0px; font-size:90%'), #uiOutput("infoNever"),#
                     plotOutput("never_sex_graph", width = "60%", height = "200px")
              ),
            ),
            fluidRow(
-             HTML( paste(h3("Modern Contraceptive Prevalence"), '<br/>')
+             HTML(
+               paste('<br/>', '<br/>',
+                     h3("Modern Contraceptive Prevalence", style='display:inline; margin: 0px 0px 10px 17px'), '<br/>')
              ),
              column(6, downloadButton("downloadGraph4", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoUnMarr"),
                     plotOutput("mod_con", width = "60%", height = "200px")
@@ -182,7 +186,9 @@ ui <- navbarPage(
              
            ),
            fluidRow(
-             HTML( paste(h3("Traditional Contraceptive Prevalence"), '<br/>')
+             HTML(
+               paste('<br/>', '<br/>',
+                 h3("Traditional Contraceptive Prevalence", style='display:inline; margin: 0px 0px 10px 17px'), '<br/>')
              ),
              column(6, downloadButton("downloadGraph6", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoTUnmarr"),
                     plotOutput("trad_unmarr", width = "60%", height = "200px")
@@ -192,19 +198,22 @@ ui <- navbarPage(
              ),
            ),
            fluidRow(
-             HTML( paste(h3("Condom Use at Last Sex"), '<br/>')
+             HTML(paste('<br/>','<br/>',
+               h3("Condom Use at Last Sex", style='display:inline; margin: 0px 0px 10px 17px'), uiOutput("infoCondom", inline=TRUE), downloadButton("downloadGraph8", "Download Graph", style='display:block; height:30px; width:125px; color:#636b6f; align:center; padding:4px; margin:20px 0px 0px 17px; font-size:90%'), '<br/>')
              ),
-             column(6, downloadButton("downloadGraph8", "Download Graph", style='height:25px; color:#636b6f;align:center;padding:4px;font-size:80%'), uiOutput("infoCondom"),
+             column(6, 
                     plotOutput("con_use", width = "60%", height = "120px")
              ),
            ), 
            fluidRow(
-             HTML( paste(h5("More Info"), '<br/>')
+             HTML(paste()
              ),
              column(12,
-                    tags$h1(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
+                    tags$hr(""),
+                    tags$h4(""), "More Info",
+                    tags$p(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
                     tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
-                    tags$h2(""), "The code used to create this App can be found on our",
+                    tags$p(""), "The code used to create this App can be found on our",
                     tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
              ),  
            )
@@ -303,6 +312,17 @@ server <- function(input, output) {
     )
   })
   
+  output$infoActivity <- renderUI({
+    tags$span(
+      popify(bsButton("infoActivity", icon("info"), size = "extra-small"), 
+             "Sexually Active",
+             "Percentage of women who were sexually activity in the four weeks preceding the survey. Light green represents 15-19 and dark green represents 20-24.",
+             "Never Had Sex",
+             "Percentage of women who never had intercourse. Light green represents 15-19 and dark green represents 20-24."
+             ),
+    )
+  })
+  
   output$infoNever <- renderUI({
     tags$span(
       popify(bsButton("infoNever", icon("info"), size = "extra-small"), 
@@ -352,7 +372,7 @@ server <- function(input, output) {
   output$graph <- renderPlot({
     bar_one <- (ggplot(ay_res(), aes(Country, Count, fill = Age_Group)) + geom_bar(stat = "identity") + 
                   geom_text(aes(label=paste0(Count,"%", " ", "(", (round(Round_Total/1000000,1))," ", "Million", ")")), color="black", size=3.5, position = position_stack(vjust = 0.5))) +
-     theme_classic()  +
+      theme_classic() +
       scale_fill_manual(values = cbp2, labels = c("Young Adolescents (10-14)", "Older Adolescents (15-19)","Older Youth (20-24)"), name = "Age Group") + 
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
@@ -512,7 +532,7 @@ server <- function(input, output) {
       geom_point(aes(y=0.25), size=6) +
       geom_text(aes (x = Age, y = 0.45, label = Age), size = 3.5, color = "black",check_overlap = TRUE) +  
       scale_color_manual(values = cbp1) +
-      scale_x_continuous(name="Median Age", breaks=seq(15, 25, 2), labels=c("15", "17", "19", "21", "23", "25"), limits=c(15, 25), expand=c(0,0)) +
+      scale_x_continuous(name="Median Age", breaks=seq(15, 25, 2), labels=c("15", "17", "19", "21", "23", "25"), limits=c(15, 25), expand=c(0,0)) + 
       scale_y_continuous(limits=c(0,1)) +
       theme(axis.line.y=element_blank(),
             axis.text.y=element_blank(),
@@ -520,12 +540,13 @@ server <- function(input, output) {
             axis.ticks.y=element_blank(),
             axis.line.x = element_line(size = 0.5, color = 'grey50'),
             axis.text.x = element_text(size = 11),
-            axis.title.x=element_blank(),
+            #axis.title.x=element_text(),
             axis.ticks.x =element_line(),
             axis.ticks.length.x = unit(0.25, "cm"),
             legend.position = "top",
             legend.text = element_text(size = 11),
-            legend.title = element_blank()) 
+            legend.title = element_blank()) +
+      labs(x="Median age at Life Event (among 25-29 year-olds)")
       #geom_hline(yintercept=0, color = "#474747", size=1)  +
       #geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) 
       # geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5, color = "black",check_overlap = TRUE) + 
