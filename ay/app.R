@@ -20,7 +20,7 @@
   library(DT)
   library(cowplot)
   
-  setwd("C:/Users/sfarid/Documents/FP2020AYApp")
+  setwd("C:/Users/ybai/Documents/FP2020AYApp/FP2020AYApp/FP2020AYApp")
   aypopdata <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYPOP")
   aypopdata$sum_10_49 =rowSums(aypopdata[,2:3])
   aypopdata$prop10_14 =round((aypopdata$`Young Adolescents (10-14)`/aypopdata$sum_10_49)*100,1)
@@ -198,8 +198,20 @@
                ),
              ),
              fluidRow(
+               HTML(
+                 paste('<br/>', '<br/>',
+                       h3("Unmet Need", style='display:inline; margin: 0px 0px 10px 17px'), uiOutput("infoUnmet", inline=TRUE), '<br/>')
+               ),
+               column(6, downloadButton("downloadGraph8", "Download Graph", style='display:block; height:30px; width:125px; color:#636b6f; align:left; padding:5px 4px 4px 4px; margin:20px 0px 10px 0px; font-size:90%'), #uiOutput("infoUUnMarr"),#
+                      plotOutput("unmet_unmarr", width = "60%", height = "200px")
+               ),
+               column(6, downloadButton("downloadGraph9", "Download Graph", style='display:block; height:30px; width:125px; color:#636b6f; align:left; padding:5px 4px 4px 4px; margin:20px 0px 10px 0px; font-size:90%'), #uiOutput("infoUMarr"),#
+                      plotOutput("unmet_marr", width = "60%", height = "200px")
+               ),
+             ),
+             fluidRow(
                HTML(paste('<br/>','<br/>',
-                 h3("Condom Use at Last Sex", style='display:inline; margin: 0px 0px 10px 17px'), uiOutput("infoCondom", inline=TRUE), downloadButton("downloadGraph8", "Download Graph", style='display:block; height:30px; width:125px; color:#636b6f; align:center; padding:5px 4px 4px 4px; margin:20px 0px 0px 17px; font-size:90%'), '<br/>')
+                 h3("Condom Use at Last Sex", style='display:inline; margin: 0px 0px 10px 17px'), uiOutput("infoCondom", inline=TRUE), downloadButton("downloadGraph10", "Download Graph", style='display:block; height:30px; width:125px; color:#636b6f; align:center; padding:5px 4px 4px 4px; margin:20px 0px 0px 17px; font-size:90%'), '<br/>')
                ),
                column(6, 
                       plotOutput("con_use", width = "60%", height = "120px")
@@ -374,6 +386,29 @@
                "Percentage of young women age 15-24 who reported using a condom at last sexual intercourse, of all young women who had sex with more than one partner in the 12 months preceding the survey. Pastel purple represents 15-24."),
       )
     })
+    output$infoUnmet <- renderUI({
+      tags$span(
+        popify(bsButton("infoUnmet", icon("info"), size = "extra-small"), 
+               "Definitions",
+               "<strong>Unmarried Sexually Active % :</strong> Percentage of unmarried sexually active women with unmet need. Light green represents 15-19, pastel purple represents 15-24, and dark green represents 20-24. <br/> <strong>Married % :</strong> Percentage of married women with unmet need. Light green represents 15-19, pastel purple represents 15-24, and dark green represents 20-24."
+        ),
+      )
+    })
+    output$infoUUnMarr <- renderUI({
+      tags$span(
+        popify(bsButton("infoUUnMarr", icon("info"), size = "extra-small"), 
+               "Definition",
+               "Percentage of unmarried sexually active women with unmet need. Light green represents 15-19, pastel purple represents 15-24, and dark green represents 20-24."),
+      )
+    })
+    output$infoUMarr <- renderUI({
+      tags$span(
+        popify(bsButton("infoUMarr", icon("info"), size = "extra-small"), 
+               "Definition",
+               "Percentage of women women with unmet need. Light green represents 15-19, pastel purple represents 15-24, and dark green represents 20-24."),
+      )
+    })
+    
     #Code for Information Buttons End
   
     
@@ -711,7 +746,7 @@
       
       
     })
-    output$downloadGraph8 <- downloadHandler(
+    output$downloadGraph10 <- downloadHandler(
       filename = function() {
         paste("Condom Use at Last Sex", "png", sep = ".")
       }, 
@@ -805,8 +840,94 @@
         print(vals$tcp_mw)
         dev.off()
       })
-  
+    #UNMET NEED PLOTS START
+    #NEW PLOT: UNMARRIED SEXUALLY ACTIVE
+    ayfp_unmet_unmarr<- reactive({
+      res <- ayfp %>% select(2,19,20,21) %>% filter(ayfp$Country == input$country)
+      req(nrow(res) > 0)
+      
+      res$`15-19` <- res$`Unmet need: 15-19 sexually active – unmarried**`
+      res$`20-24` <- res$`Unmet need: 20-24 sexually active – unmarried**`
+      res$`15-24` <- res$`Unmet need: 15-24 sexually active  – unmarried**`
+      
+      res.long <- res %>% gather("Age.Group", "Percent", "15-19", "20-24", "15-24")
+      
+    })
+    
+    output$unmet_unmarr <- renderPlot({
+      un_aw <- (ggplot(ayfp_unmet_unmarr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+        coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+        labs(subtitle = "Unmarried Sexually Active %") + theme(plot.subtitle=element_text(size=13, color="black")) +
+        scale_fill_manual(values = cbp5, name = "Age Group") + 
+        theme(axis.line.y=element_blank(),
+              axis.text.y=element_blank(),
+              axis.title.x=element_blank(),
+              axis.title.y=element_blank(),
+              axis.ticks.y=element_blank(),
+              axis.text.x =element_blank(),
+              axis.ticks.x =element_blank(),
+              axis.line.x =element_blank(),
+              legend.position = "bottom")
+      
+      vals$un_aw <- un_aw
+      print(un_aw)
+      
+      
+    })
+    output$downloadGraph8 <- downloadHandler(
+      filename = function() {
+        paste("Unmet Need - UMSA", "png", sep = ".")
+      }, 
+      content = function(file) {
+        png(file, width = 980, height = 400) 
+        print(vals$un_aw)
+        dev.off()
+      })
+    
+    #NEW PLOT: MARRIED
+    ayfp_unmet_marr<- reactive({
+      res <- ayfp %>% select(2,22,23,24) %>% filter(ayfp$Country == input$country)
+      req(nrow(res) > 0)
+      
+      res$`15-19` <- res$`Unmet need : 15-19 year olds – married`
+      res$`20-24` <- res$`Unmet need: 20-24 year olds – married`
+      res$`15-24` <- res$`Unmet need: 15-24 year olds – married`
+      
+      res.long <- res %>% gather("Age.Group", "Percent", "15-19", "20-24", "15-24")
+    })
+    
+    output$unmet_marr <- renderPlot({
+      un_mw <- (ggplot(ayfp_unmet_marr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+        coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
+        labs(subtitle = "Married %") + theme(plot.subtitle=element_text(size=13, color="black")) +
+        scale_fill_manual(values = cbp5, name = "Age Group") + 
+        theme(axis.line.y=element_blank(),
+              axis.text.y=element_blank(),
+              axis.title.x=element_blank(),
+              axis.title.y=element_blank(),
+              axis.ticks.y=element_blank(),
+              axis.text.x =element_blank(),
+              axis.ticks.x =element_blank(),
+              axis.line.x =element_blank(),
+              legend.position = "bottom")
+      
+      vals$un_mw <- un_mw
+      print(un_mw)
+      
+      
+    })
+    output$downloadGraph9 <- downloadHandler(
+      filename = function() {
+        paste("Unmet Need - Married Women", "png", sep = ".")
+      }, 
+      content = function(file) {
+        png(file, width = 980, height = 400) 
+        print(vals$un_mw)
+        dev.off()
+      })
+    
   }
+
   
   # Run the application 
   shinyApp(ui = ui, server = server)
