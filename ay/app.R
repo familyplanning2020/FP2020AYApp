@@ -221,8 +221,8 @@
                HTML(paste()
                ),
                column(12,
-                      tags$hr(""),
-                      tags$h4(""), "More Info",
+                      tags$hr(height = "2px"),
+                      tags$h4("More Info"),
                       tags$p(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
                       tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
                       tags$p(""), "The code used to create this App can be found on our",
@@ -636,7 +636,7 @@
     })
     
     output$mod_con <- renderPlot({
-     mcp_aw <- (ggplot(ayfp_mod_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
+     mcp_aw <- (ggplot(subset(ayfp_mod_res(), `Percent`>0), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
       coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
         labs( subtitle = "Unmarried Sexually Active %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp3, name = "Age Group") + 
@@ -727,7 +727,7 @@
     })
     
     output$con_use <- renderPlot({
-      fig <- (ggplot(ayfp_con_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
+      fig <- (ggplot(subset(ayfp_con_res(), `Percent`>0), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
         coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
         labs(subtitle = "Condom Use During Last Sex %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp4, name = "Age Group") + 
@@ -770,7 +770,7 @@
     })
     
     output$trad_unmarr <- renderPlot({
-      tcp_aw <- (ggplot(ayfp_trad_unmarr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+      tcp_aw <- (ggplot(subset(ayfp_trad_unmarr(),`Percent`>0),aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
       coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
         labs(subtitle = "Unmarried Sexually Active %") + theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp3, name = "Age Group") + 
@@ -855,7 +855,7 @@
     })
     
     output$unmet_unmarr <- renderPlot({
-      un_aw <- (ggplot(ayfp_unmet_unmarr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+      un_aw <- (ggplot(subset(ayfp_unmet_unmarr(), `Percent`>0), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
         coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
         labs(subtitle = "Unmarried Sexually Active %") + theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp5, name = "Age Group") + 
