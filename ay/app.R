@@ -20,8 +20,8 @@
   library(DT)
   library(cowplot)
   
-  setwd("C:/Users/ybai/Documents/FP2020AYApp/FP2020AYApp/FP2020AYApp")
-  aypopdata <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYPOP")
+  setwd("C:/Users/sfarid/Documents/FP2020AYApp")
+  aypopdata <- read_excel("ay/Data/CleanedAYData_2021.xlsx", sheet = "AYPOP")
   aypopdata$sum_10_49 =rowSums(aypopdata[,2:3])
   aypopdata$prop10_14 =round((aypopdata$`Young Adolescents (10-14)`/aypopdata$sum_10_49)*100,1)
   aypopdata$prop15_19 =round((aypopdata$`Older Adolescents (15-19)`/aypopdata$sum_10_49)*100,1)
@@ -38,20 +38,20 @@
   aypopdata.long$survey = sample(100, size = nrow(aypopdata.long), replace = TRUE)
   #aypopdata.long =aypopdata.long[, -16]
   
-  kle_age <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEAgeEvents")
-  kle_marriage <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "KLEMarriage")
+  kle_age <- read_excel("ay/Data/CleanedAYData_2021.xlsx", sheet = "KLEAgeEvents")
+  kle_marriage <- read_excel("ay/Data/CleanedAYData_2021.xlsx", sheet = "KLEMarriage")
   kle_marriage$`% of 15-19 year olds who are married`=round(kle_marriage$`% of 15-19 year olds who are married`*100,1)
   kle_marriage$`% of 20-24 year olds who are married`=round(kle_marriage$`% of 20-24 year olds who are married`*100,1)
   kle_marriage$`% of adolescent and youth (15-24) who are married`=round(kle_marriage$`% of adolescent and youth (15-24) who are married`*100,1)
   kle_marriage$`% of 20-24 year olds married before 18`=round(kle_marriage$`% of 20-24 year olds married before 18`*100,1)
   kle_marriage$`% of 25-29 year olds married before 18`=round(kle_marriage$`% of 25-29 year olds married before 18`*100,1)
-  data <- subset(kle_marriage, select=c(4))
+  data <- subset(kle_marriage, select=c(5))
   colnames(data)[1]=""
-  kle_marriage=kle_marriage[, -c(4)]
+  kle_marriage=kle_marriage[, -c(5)]
   kle_marriage$`% of adolescent and youth (15-24) who are married`=data
-  colnames(kle_marriage)[6]="% of adolescent and youth (15-24) who are married"
+  colnames(kle_marriage)[6]="% of 25-29 year olds married before 18"
   
-  ayfp <- read_excel("ay/Data/CleanedAYData.xlsx", sheet = "AYFPUse")
+  ayfp <- read_excel("ay/Data/CleanedAYData_2021.xlsx", sheet = "AYFPUse")
   ayfp$`MCPR for married adolescent and youth (15-24)`= round(ayfp$`MCPR for married adolescent and youth (15-24)`, 1)
   
   # Round the counts of AY popualtion & WRA Population  ==> SHIZA DID THIS <== 
@@ -97,6 +97,9 @@
                  is a global partnership to empower women and girls by investing in rights-based family planning. 
                  You will be able to view, compare, and analyze the adolescent and youth data that 
                  was released with the 2019-2020 FP2020 Annual Progress Report through different graphics and tables."),'<br/>',
+                 p("All estimates are calculated using a country's latest Demographic Health Survey (DHS), Multiple Indicator Cluster Survey (MICS),
+                   or Performance Monitoring for Action Surveys (PMA). These surveys provide nationally representative data on health and population 
+                   in developing countries; all data is publicly available."),
                  h2("Profile, Compare, and Analyze Pages"),'<br/>',
                  p("The Profile Page includes individual country data on adolescents and youth population, key life events, prevalence of sexual activity,
                   modern contraceptive method prevalence, and traditional contraceptive method prevalence. The Compare Page provides the opportunity to view
@@ -226,7 +229,8 @@
                       tags$p(""), "If you woud like to learn more, the A&Y Data Set used to create this App can be found on the ",
                       tags$a(href = "https://www.familyplanning2020.org/ayfp", "FP2020 Site"),
                       tags$p(""), "The code used to create this App can be found on our",
-                      tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account")
+                      tags$a(href = "https://github.com/familyplanning2020/FP2020AYApp", "GitHub Account"),
+                      tags$p(""), "Countries with (*) are not included in the 69 FP2020 focus countries." ,
                ),  
              )
     ),
@@ -435,7 +439,7 @@
               axis.line.x =element_blank(),
               legend.position = "right")+
         coord_flip()+ scale_y_reverse() +
-        labs(caption="test", size=7) 
+        labs(caption="Source: UN Population Division 2020", size=7) 
       
       vals$bar_one <- bar_one
       print(bar_one)
@@ -456,45 +460,47 @@
     ### END PLOT
     
     
-    #NEW PLOT: Table
+    #Key Life Events Table
     kle_mar_res <- reactive({
       res3 <- kle_marriage %>% filter(kle_marriage$Country == input$country)
       req(nrow(res3) > 0)
-      table1 <- matrix(c(res3[[1,2]], NA, res3[[1,3]], res3[[1,4]], res3[[1,5]], NA, NA, res3[[1,6]]), ncol = 2, byrow = TRUE)
+      table1 <- matrix(c(res3[[1,3]], NA, res3[[1,4]], res3[[1,5]], NA, res3[[1,6]],  res3[[1,7]], NA, res3[[1,2]], res3[[1,2]]), ncol = 2, byrow = TRUE)
       colnames(table1) <- c("% Married", "% Married before 18 Years Old")
-      rownames(table1) <- c("15-19", "20-24", "25-29","15-24")
+      rownames(table1) <- c( "15-19", "20-24", "25-29","15-24", "Source")
       table2 <- as.matrix(table1)
-      `Age Group`=c("15-19", "20-24", "25-29","15-24")
+      `Age Group`=c( "15-19", "20-24", "25-29","15-24", "Source")
       table2=cbind(`Age Group`, table2)
       
-      table2
+      table2 
       
     })
     
     output$table <- renderTable(kle_mar_res(),hover =TRUE, bordered = TRUE, colnames= TRUE,digits = 1)
     
-    #NEW PLOT:Recent Sexual Activity 
+    #Recent Sexual Activity 
     ayfp_sex_res <- reactive({
-      
-      res4 <- ayfp %>% select(2,6,7)  %>% filter(ayfp$Country == input$country)
+      res4 <- ayfp %>% select(2,3,6,7)  %>% filter(ayfp$Country == input$country)
       req(nrow(res4) > 0)
       res4$"15-19" <- res4$"Recent sex older adolescents aged 15-19"
       res4$"20-24" <- res4$"Recent sex older youth aged 20-24"
-      res4 <- res4[,-1:-3]
-      res4.long <- res4 %>% gather("Age.Group", "Percent", "15-19" , "20-24")
+      #res4 <- res4[,-1:-3]
+      res4.long <- res4 %>% gather("Age.Group", "Percent","15-19" , "20-24") 
       res4.long
+      res4.long %>% filter(res4.long$Percent>0)
       
     })
     
     output$sex_activity_graph <- renderPlot({
-      validate(
-        need(nrow(ayfp_sex_res()) > 0, "No data for this selection.")
-      )
-      sex_act <- (ggplot(ayfp_sex_res(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
+      source<- ayfp_sex_res()
+      # validate(
+      #   need(nrow(ayfp_sex_res()) > 0, "No data for this selection.")
+      # )
+    
+      sex_act <- (ggplot(subset(ayfp_sex_res(), `Percent`>0), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
       coord_flip() + theme_classic() + 
         geom_text(aes(label=`Percent`), color="black", size=3.5) + 
         scale_fill_manual(values = cbp3, name = "Age Group") + 
-        labs(title = "Sexual Activity %") + theme(axis.line.y=element_blank(),
+        labs(title = "% Sexually Active (Last Month)") +  theme(axis.line.y=element_blank(),
                                                   axis.text.y=element_blank(),
                                                   axis.title.x=element_blank(),
                                                   axis.title.y=element_blank(),
@@ -502,11 +508,10 @@
                                                   axis.text.x =element_blank(),
                                                   axis.ticks.x =element_blank(),
                                                   axis.line.x =element_blank(),
-                                                  legend.position = "bottom")
+                                                  legend.position = "bottom") + labs(caption=paste0("Source: ",source$Source), size=7)
       
       vals$sex_act<- sex_act
       print(sex_act)
-      
       
     })
     output$downloadGraph2 <- downloadHandler(
@@ -522,22 +527,25 @@
     
     #END PLOT
     
-    #NEW PLOT: Ever Sexual Activity 
+    #Ever Sexual Activity 
     ayfp_never_res <- reactive({
-      res5 <- ayfp %>% select(2,4,5) %>% filter(ayfp$Country == input$country)
+      res5 <- ayfp %>% select(2,3,4,5) %>% filter(ayfp$Country == input$country)
       req(nrow(res5) > 0)
       ayfp_never_res
       res5$"15-19" <- res5$"Never have had sex older adolescents aged 15-19"
       res5$"20-24" <- res5$"Never have had sex older youth aged 20-24"
-      res5.long <- res5 %>% gather("Age.Group", "Percent", "15-19", "20-24")
+      res5.long <- res5 %>% gather("Age.Group", "Percent",  "15-19", "20-24")
       res5.long
+      res5.long %>% filter(res5.long$Percent>0)
+      
     })
     
     output$never_sex_graph <- renderPlot({
-      never_sex<- (ggplot(ayfp_never_res(), aes(x= reorder(`Age.Group`,`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+     source<- ayfp_never_res() 
+      never_sex<- (ggplot(subset(ayfp_never_res(), `Percent`>0), aes(x= reorder(`Age.Group`,`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
         coord_flip() + theme_classic() + 
         geom_text(aes(label=`Percent`), color="black", size=3.5) + scale_fill_manual(values = cbp3, name = "Age Group") + 
-        labs(title= "Never Had Sex %") + theme(axis.line.y=element_blank(),
+        labs(title= "% Never Had Sex") + theme(axis.line.y=element_blank(),
                                                axis.text.y=element_blank(),
                                                axis.title.x=element_blank(),
                                                axis.title.y=element_blank(),
@@ -545,7 +553,7 @@
                                                axis.text.x =element_blank(),
                                                axis.ticks.x =element_blank(),
                                                axis.line.x =element_blank(),
-                                               legend.position = "bottom")
+                                               legend.position = "bottom") +labs(caption=paste0("Source: ",source$Source), size=7)
       
       vals$never_sex<- never_sex
       print(never_sex)
@@ -571,10 +579,11 @@
       res2.long <- res2 %>% gather(Event, Age, `First Marriage`,`First Sex`, `First Birth`)
       res2.long$Event<- factor(res2.long$Event, levels = c("First Marriage", "First Sex", "First Birth"))
       res2.long
+
     })
     
     output$linegraph <- renderPlot({
-      
+      source<- kle_age_res() 
       #Create Plot
       timeline_plot<- ggplot(kle_age_res(), aes(x=Age, y=0.25, col=Event, label=""))+
         theme_classic() + 
@@ -599,13 +608,8 @@
               legend.position = "top",
               legend.background = element_rect(fill = '#f0f1f2'),
               legend.text = element_text(size = 12),
-              legend.title = element_blank()) 
-        #labs(x="Median age at Life Event (among 25-29 year-olds)")
-        #geom_hline(yintercept=0, color = "#474747", size=1)  +
-        #geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) 
-        # geom_text(aes (x = Age, y = -0.05, label = Age), size = 3.5, color = "black",check_overlap = TRUE) + 
-        # geom_text(aes (x = Age, y = 0.1, label = ""), size = 3.5) 
-      #ggtitle("Median Age at First Marriage, Sex and Birth")
+              legend.title = element_blank()) + labs(caption=paste0("Source: ",source$Source), size=7)
+
       timeline_plot
       
       vals$timeline_plot<- timeline_plot
@@ -627,18 +631,21 @@
     
     #NEW PLOT
     ayfp_mod_res <- reactive({
-      res <- ayfp %>% select(2,8, 9) %>% filter(ayfp$Country == input$country)
+      res <- ayfp %>% select(2,3,8, 9) %>% filter(ayfp$Country == input$country)
       req(nrow(res) > 0)
       res$`15-19` <- res$`MCPR for unmarried sexually active adolescents (15-19)**`
       res$`20-24` <- res$`MCPR for unmarried sexually active youth (20-24)**`
       res.long <- res %>% gather("Age.Group", "Percent", "15-19" , "20-24")
       res.long
+      res.long %>% filter(res.long$Percent>0)
+      
     })
     
     output$mod_con <- renderPlot({
+      source <- ayfp_mod_res()
      mcp_aw <- (ggplot(subset(ayfp_mod_res(), `Percent`>0), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
       coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-        labs( subtitle = "Unmarried Sexually Active %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
+        labs( subtitle = "MCP(%) Among Unmarried Sexually Active") +  theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp3, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
@@ -648,7 +655,7 @@
               axis.text.x =element_blank(),
               axis.ticks.x =element_blank(),
               axis.line.x =element_blank(),
-              legend.position = "bottom")
+              legend.position = "bottom") +labs(caption=paste0("Source: ",source$Source), size=7)
       
       vals$mcp_aw <- mcp_aw
       print(mcp_aw)
@@ -667,11 +674,9 @@
     
     #END PLOT
     
-    ### NEW PLOT Modern Contraceptive Use: Married Women
-    #Notes: Fix Decimal Points
-    
+    # Modern Contraceptive Use: Married Women
     ayfp_mod_marr<- reactive({
-      res <- ayfp %>% select(2,10, 11, 12) %>% filter(ayfp$Country == input$country)
+      res <- ayfp %>% select(2,3,10, 11, 12) %>% filter(ayfp$Country == input$country)
       req(nrow(res) > 0)
       
       res$`15-19` <- res$`MCPR for married adolescents (15-19)`
@@ -680,12 +685,15 @@
       
       res.long <- res %>% gather("Age.Group", "Percent", "15-19" , "20-24", "15-24")
       res.long
+      res.long %>% filter(res.long$Percent>0)
+      
     })
     
     output$mod_marr <- renderPlot({
-      mcp_mw <- (ggplot(ayfp_mod_marr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+      source<- ayfp_mod_marr()
+      mcp_mw <- (ggplot(subset(ayfp_mod_marr(), `Percent`>0), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
        coord_flip() + theme_classic() + geom_text(aes(label= round(`Percent`,1)), color="black", size=3.5) + 
-        labs(subtitle = "Married %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
+        labs(subtitle = "MCP(%) Among Married") +  theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp5, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
@@ -695,7 +703,8 @@
               axis.text.x =element_blank(),
               axis.ticks.x =element_blank(),
               axis.line.x =element_blank(),
-              legend.position = "bottom")
+              legend.position = "bottom") +
+        labs(caption=paste0("Source: ",source$Source), size=7)
       
       vals$mcp_mw <- mcp_mw
       print(mcp_mw)
@@ -715,21 +724,22 @@
     
     #END PLOT
     
-    #NEW PLOT
-    #CONDOM USE AT LAST SEX
+    #Condom Use at Last Sex
     ayfp_con_res<- reactive({
-      res <- ayfp %>% select(2,29) %>% filter(ayfp$Country == input$country)
+      res <- ayfp %>% select(2,3,29) %>% filter(ayfp$Country == input$country)
       req(nrow(res) > 0)
       
       res$`15-24` <- res$`Condom use during last sex: 15-24 year olds`
       res.long <- res %>% gather("Age.Group", "Percent", "15-24")
+      res.long %>% filter(res.long$Percent>0)
       
     })
     
     output$con_use <- renderPlot({
+      source <- ayfp_con_res()
       fig <- (ggplot(subset(ayfp_con_res(), `Percent`>0), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity"))+
         coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-        labs(subtitle = "Condom Use During Last Sex %") +  theme(plot.subtitle=element_text(size=13, color="black")) +
+        labs(subtitle = "% Condom Use During Last Sex") +  theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp4, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
@@ -739,7 +749,7 @@
               axis.text.x =element_blank(),
               axis.ticks.x =element_blank(),
               axis.line.x =element_blank(),
-              legend.position = "bottom")
+              legend.position = "bottom") +labs(caption=paste0("Source: ",source$Source), size=7)
       
       vals$fig <- fig
       print(fig)
@@ -756,23 +766,23 @@
         dev.off()
     })
     
-    #TRADITIONAL USE PLOTS START
-    #NEW PLOT: UNMARRIED SEXUALLY ACTIVE
+    #Traditional Method Use 
+    #UMSA
     ayfp_trad_unmarr<- reactive({
-      res <- ayfp %>% select(2,13,14) %>% filter(ayfp$Country == input$country)
+      res <- ayfp %>% select(2,3,13,14) %>% filter(ayfp$Country == input$country)
       req(nrow(res) > 0)
-      
       res$`15-19` <- res$`% of unmarried sexually active** older adolescents aged 15-19 using a traditional method`
       res$`20-24` <- res$`% of unmarried sexually active** older youth aged 20-24 using a traditional method`
-      
       res.long <- res %>% gather("Age.Group", "Percent", "15-19", "20-24")
+      res.long %>% filter(res.long$Percent>0)
       
     })
     
     output$trad_unmarr <- renderPlot({
+      source <- ayfp_trad_unmarr()
       tcp_aw <- (ggplot(subset(ayfp_trad_unmarr(),`Percent`>0),aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
       coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-        labs(subtitle = "Unmarried Sexually Active %") + theme(plot.subtitle=element_text(size=13, color="black")) +
+        labs(subtitle = "TCP(%) Among Unmarried Sexually Active") + theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp3, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
@@ -782,7 +792,7 @@
               axis.text.x =element_blank(),
               axis.ticks.x =element_blank(),
               axis.line.x =element_blank(),
-              legend.position = "bottom")
+              legend.position = "bottom") +labs(caption=paste0("Source: ",source$Source), size=7)
       
       vals$tcp_aw <- tcp_aw
       print(tcp_aw)
@@ -799,22 +809,23 @@
         dev.off()
       })
   
-    #NEW PLOT
+    #Married
     ayfp_trad_marr<- reactive({
-      res <- ayfp %>% select(2,15,16,17) %>% filter(ayfp$Country == input$country)
+      res <- ayfp %>% select(2,3,15,16,17) %>% filter(ayfp$Country == input$country)
       req(nrow(res) > 0)
-      
       res$`15-19` <- res$`% of married older adolescents aged 15-19 using a traditional method`
       res$`20-24` <- res$`% of married older youth aged 20-24 using a traditional method`
       res$`15-24` <- res$`% of married youth aged 15-24 using a traditional method`
-      
       res.long <- res %>% gather("Age.Group", "Percent", "15-19", "20-24", "15-24")
+      res.long %>% filter(res.long$Percent>0)
+      
     })
     
     output$trad_marr <- renderPlot({
-      tcp_mw <- (ggplot(ayfp_trad_marr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+      source<- ayfp_trad_marr()
+      tcp_mw <- (ggplot(subset(ayfp_trad_marr(), `Percent`>0), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
       coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-        labs(subtitle = "Married %") + theme(plot.subtitle=element_text(size=13, color="black")) +
+        labs(subtitle = "TCP(%) Among Married") + theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp5, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
@@ -824,7 +835,7 @@
               axis.text.x =element_blank(),
               axis.ticks.x =element_blank(),
               axis.line.x =element_blank(),
-              legend.position = "bottom")
+              legend.position = "bottom")+labs(caption=paste0("Source: ",source$Source), size=7)
       
       vals$tcp_mw <- tcp_mw
       print(tcp_mw)
@@ -840,24 +851,25 @@
         print(vals$tcp_mw)
         dev.off()
       })
-    #UNMET NEED PLOTS START
-    #NEW PLOT: UNMARRIED SEXUALLY ACTIVE
+    
+    #Unmet Need 
+    #UMSA
     ayfp_unmet_unmarr<- reactive({
-      res <- ayfp %>% select(2,19,20,21) %>% filter(ayfp$Country == input$country)
+      res <- ayfp %>% select(2,3,19,20,21) %>% filter(ayfp$Country == input$country)
       req(nrow(res) > 0)
-      
       res$`15-19` <- res$`Unmet need: 15-19 sexually active – unmarried**`
       res$`20-24` <- res$`Unmet need: 20-24 sexually active – unmarried**`
       res$`15-24` <- res$`Unmet need: 15-24 sexually active  – unmarried**`
-      
       res.long <- res %>% gather("Age.Group", "Percent", "15-19", "20-24", "15-24")
+      res.long %>% filter(res.long$Percent>0)
       
     })
     
     output$unmet_unmarr <- renderPlot({
+      source <- ayfp_unmet_unmarr()
       un_aw <- (ggplot(subset(ayfp_unmet_unmarr(), `Percent`>0), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
         coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-        labs(subtitle = "Unmarried Sexually Active %") + theme(plot.subtitle=element_text(size=13, color="black")) +
+        labs(subtitle = "% Unmed Need Among Unmarried Sexually Active") + theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp5, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
@@ -867,7 +879,7 @@
               axis.text.x =element_blank(),
               axis.ticks.x =element_blank(),
               axis.line.x =element_blank(),
-              legend.position = "bottom")
+              legend.position = "bottom")+labs(caption=paste0("Source: ",source$Source), size=7)
       
       vals$un_aw <- un_aw
       print(un_aw)
@@ -884,22 +896,23 @@
         dev.off()
       })
     
-    #NEW PLOT: MARRIED
+    #Married
     ayfp_unmet_marr<- reactive({
-      res <- ayfp %>% select(2,22,23,24) %>% filter(ayfp$Country == input$country)
+      res <- ayfp %>% select(2,3,22,23,24) %>% filter(ayfp$Country == input$country)
       req(nrow(res) > 0)
-      
       res$`15-19` <- res$`Unmet need : 15-19 year olds – married`
       res$`20-24` <- res$`Unmet need: 20-24 year olds – married`
       res$`15-24` <- res$`Unmet need: 15-24 year olds – married`
-      
       res.long <- res %>% gather("Age.Group", "Percent", "15-19", "20-24", "15-24")
+      res.long %>% filter(res.long$Percent>0)
+      
     })
     
     output$unmet_marr <- renderPlot({
-      un_mw <- (ggplot(ayfp_unmet_marr(), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
+      source <- ayfp_unmet_marr()
+      un_mw <- (ggplot(subset(ayfp_unmet_marr(), `Percent`>0), aes(x= reorder(`Age.Group`, -`Percent`), y = `Percent`, fill = `Age.Group`)) + geom_bar(stat = "identity")) +
         coord_flip() + theme_classic() + geom_text(aes(label=`Percent`), color="black", size=3.5) + 
-        labs(subtitle = "Married %") + theme(plot.subtitle=element_text(size=13, color="black")) +
+        labs(subtitle = "% Unmet Need Among Married") + theme(plot.subtitle=element_text(size=13, color="black")) +
         scale_fill_manual(values = cbp5, name = "Age Group") + 
         theme(axis.line.y=element_blank(),
               axis.text.y=element_blank(),
@@ -909,7 +922,7 @@
               axis.text.x =element_blank(),
               axis.ticks.x =element_blank(),
               axis.line.x =element_blank(),
-              legend.position = "bottom")
+              legend.position = "bottom")+labs(caption=paste0("Source: ",source$Source), size=7)
       
       vals$un_mw <- un_mw
       print(un_mw)
