@@ -252,8 +252,23 @@
                                        options = list(maxItems = 4))
                       )
                ),
+               h3("Select Indicator"),
+               h5(checkboxInput("Select Indicator", label = "All Indicators", value = TRUE),
+                  hr(), fluidRow(column(6, verbatimTextOutput("value")))
+                  ),
                column(6,
                )),
+             fluidRow(
+               HTML(
+                 paste('<br>',
+                       h3("Adolescents & Youth Population"), style='display:inline; margin: 0px 0px 10px 17px'), uiOutput("info0", inline = TRUE), downloadButton("downloadGraph", "Download Graph", style='display:block; height:30px; width:125px; color:#636b6f; align:center; padding:5px 4px 4px 4px; margin:20px 0px 0px 17px; font-size:90%'), '<br/>'
+               )
+             ),
+             column(6,
+                    plotOutput("graph2", width = "75%", height = "150px")    
+             ),
+             column(6,
+             ),
              fluidRow(
                HTML(paste(h5("More Info"), '<br/>')
                ),
@@ -456,6 +471,32 @@
         dev.off()
     })
     
+    ay_res2 <- reactive({
+      res <- aypopdata.long %>% filter(aypopdata.long$Country == input$country)
+      req(nrow(res) > 0)
+      res
+    })
+    
+    output$graph2 <- renderPlot({
+      bar_one <- (ggplot(ay_res2(), aes(Country, Count, fill = Age_Group)) + geom_bar(stat = "identity") + 
+                    geom_text(aes(label=paste0(Count,"%", " ", "(", (round(Round_Total/1000000,1))," ", "Million", ")")), color="black", size=3.5, position = position_stack(vjust = 0.5))) +
+        theme_classic() +
+        scale_fill_manual(values = cbp2, labels = c("Young Adolescents (10-14)", "Older Adolescents (15-19)","Older Youth (20-24)"), name = "Age Group") + 
+        theme(axis.line.y=element_blank(),
+              axis.text.y=element_blank(),
+              axis.title.y=element_blank(),
+              axis.title.x = element_blank(),
+              axis.ticks.y=element_blank(),
+              axis.text.x =element_blank(),
+              axis.ticks.x =element_blank(),
+              axis.line.x =element_blank(),
+              legend.position = "right")+
+        coord_flip()+ scale_y_reverse() +
+        labs(caption="Source: UN Population Division 2020", size=7) 
+      
+      vals$bar_one <- bar_one
+      print(bar_one)
+    })
     
     ### END PLOT
     
